@@ -9,19 +9,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { register, type RegisterData } from '../src/services/auth';
 import { Link } from 'expo-router';
+import { login, type LoginData } from '../src/services/auth';
+import { saveSession } from '../src/services/session';
 
 interface FormErrors {
-  nombre?: string;
   email?: string;
   password?: string;
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function RegisterScreen() {
-  const [nombre, setNombre] = useState('');
+export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -32,12 +31,6 @@ export default function RegisterScreen() {
   const validate = (): boolean => {
     const next: FormErrors = {};
 
-    if (!nombre.trim()) {
-      next.nombre = 'El nombre es obligatorio';
-    } else if (nombre.trim().length < 2 || nombre.trim().length > 100) {
-      next.nombre = 'El nombre debe tener entre 2 y 100 caracteres';
-    }
-
     if (!email.trim()) {
       next.email = 'El email es obligatorio';
     } else if (!EMAIL_REGEX.test(email.trim())) {
@@ -46,15 +39,13 @@ export default function RegisterScreen() {
 
     if (!password) {
       next.password = 'La contraseña es obligatoria';
-    } else if (password.length < 6) {
-      next.password = 'La contraseña debe tener al menos 6 caracteres';
     }
 
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const handleRegister = async () => {
+  const handleLogin = async () => {
     setApiError(null);
     setSuccess(null);
 
@@ -62,18 +53,23 @@ export default function RegisterScreen() {
       return;
     }
 
-    const payload: RegisterData = {
-      nombre: nombre.trim(),
+    const payload: LoginData = {
       email: email.trim(),
       password,
     };
 
     setLoading(true);
     try {
-      const response = await register(payload);
-      setSuccess(response.mensaje ?? 'Registro exitoso');
-      setNombre('');
-      setEmail('');
+      const response = await login(payload);
+      if (response.token) {
+        await saveSession({
+          token: response.token,
+          id: response.id,
+          nombre: response.nombre,
+          email: response.email,
+        });
+      }
+      setSuccess(response.mensaje ?? 'Login exitoso');
       setPassword('');
     } catch (err) {
       if (err instanceof Error) {
@@ -104,7 +100,7 @@ export default function RegisterScreen() {
           </View>
           <Text className="mb-1 text-3xl font-bold text-white">Neo Physis Equa</Text>
           <Text className="mb-8 text-center text-sm text-slate-400">
-            Crea tu cuenta para comenzar
+            Inicia sesión en tu cuenta
           </Text>
         </View>
 
@@ -119,20 +115,6 @@ export default function RegisterScreen() {
             <Text className="text-center text-sm text-green-400">{success}</Text>
           </View>
         )}
-
-        <View className="mb-4">
-          <Text className="mb-1 text-sm font-medium text-slate-300">Nombre</Text>
-          <TextInput
-            className={inputClass}
-            placeholder="Tu nombre completo"
-            placeholderTextColor="#64748b"
-            value={nombre}
-            onChangeText={setNombre}
-            autoCapitalize="words"
-            autoCorrect={false}
-          />
-          {errors.nombre && <Text className="mt-1 text-xs text-red-400">{errors.nombre}</Text>}
-        </View>
 
         <View className="mb-4">
           <Text className="mb-1 text-sm font-medium text-slate-300">Email</Text>
@@ -153,7 +135,7 @@ export default function RegisterScreen() {
           <Text className="mb-1 text-sm font-medium text-slate-300">Contraseña</Text>
           <TextInput
             className={inputClass}
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Tu contraseña"
             placeholderTextColor="#64748b"
             value={password}
             onChangeText={setPassword}
@@ -166,21 +148,21 @@ export default function RegisterScreen() {
         </View>
 
         <TouchableOpacity
-          onPress={handleRegister}
+          onPress={handleLogin}
           disabled={loading}
           className="items-center rounded-xl bg-blue-500 py-3.5 disabled:opacity-50"
         >
           {loading ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text className="text-base font-semibold text-white">Registrarse</Text>
+            <Text className="text-base font-semibold text-white">Iniciar sesión</Text>
           )}
         </TouchableOpacity>
 
         <View className="mt-6 flex-row justify-center">
-          <Text className="text-sm text-slate-400">¿Ya tienes cuenta? </Text>
-          <Link href="/login" className="text-sm font-semibold text-blue-400">
-            Inicia sesión
+          <Text className="text-sm text-slate-400">¿No tienes cuenta? </Text>
+          <Link href="/register" className="text-sm font-semibold text-blue-400">
+            Regístrate
           </Link>
         </View>
       </ScrollView>
