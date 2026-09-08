@@ -22,31 +22,39 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-900">
-        <ActivityIndicator color="#ffffff" size="large" />
+      <View className="flex-1 items-center justify-center bg-slate-50">
+        <ActivityIndicator color="#10b981" size="large" />
       </View>
     );
   }
 
   if (!session || !session.token) {
-    return <ActivityIndicator color="#ffffff" size="large" />;
+    return <ActivityIndicator color="#10b981" size="large" />;
   }
 
   return (
-    <View className="flex-1 items-center justify-center bg-slate-900 px-6">
-      <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-500">
-        <Text className="text-2xl font-bold text-white">N</Text>
+    <View className="flex-1 justify-center bg-slate-50 px-6">
+      <View className="items-center rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <View className="mb-4 h-20 w-20 items-center justify-center rounded-3xl bg-emerald-500">
+          <Text className="text-4xl font-bold text-white">N</Text>
+        </View>
+
+        <Text className="text-center text-2xl font-bold text-slate-900">
+          ¡Hola, {session.nombre}!
+        </Text>
+        <Text className="mt-2 text-center text-sm text-slate-500">
+          {session.email}
+        </Text>
+        <Text className="mt-6 text-center text-sm text-slate-500">
+          Has iniciado sesión correctamente
+        </Text>
       </View>
-      <Text className="mb-1 text-3xl font-bold text-white">Hola, {session.nombre}</Text>
-      <Text className="mb-10 text-center text-sm text-slate-400">
-        Has iniciado sesión correctamente
-      </Text>
 
       <TouchableOpacity
         onPress={handleLogout}
-        className="items-center rounded-xl border border-red-500 bg-red-500/10 px-6 py-3"
+        className="mt-6 items-center rounded-xl border border-rose-200 bg-rose-50 px-6 py-3.5"
       >
-        <Text className="text-base font-semibold text-red-400">Cerrar sesión</Text>
+        <Text className="text-base font-semibold text-rose-600">Cerrar sesión</Text>
       </TouchableOpacity>
     </View>
   );
