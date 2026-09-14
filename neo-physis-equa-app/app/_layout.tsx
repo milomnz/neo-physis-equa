@@ -10,6 +10,7 @@ export default function RootLayout() {
         headerTitleAlign: 'center',
         headerShadowVisible: false,
         contentStyle: { backgroundColor: '#f8fafc' },
+        headerShown: ñ,
       }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
