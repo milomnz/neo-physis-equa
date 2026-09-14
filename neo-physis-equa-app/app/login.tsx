@@ -66,6 +66,9 @@ export default function LoginScreen() {
           id: response.id,
           nombre: response.nombre,
           email: response.email,
+          role: response.role,
+          accessibilityProfile: response.accessibilityProfile,
+          disabilityType: response.disabilityType,
         });
       }
       router.replace('/home');
