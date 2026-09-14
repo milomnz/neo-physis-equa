@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 export interface Session {
   token: string;
-  id: number;
+  id: string;
   nombre: string;
   email: string;
 }
@@ -57,12 +57,12 @@ export async function getSession(): Promise<Session | null> {
     const user = userRaw ? JSON.parse(userRaw) : {};
     return {
       token,
-      id: user.id ?? 0,
+      id: user.id ?? '',
       nombre: user.nombre ?? '',
       email: user.email ?? '',
     };
   } catch {
-    return { token, id: 0, nombre: '', email: '' };
+    return { token, id: '', nombre: '', email: '' };
   }
 }
 

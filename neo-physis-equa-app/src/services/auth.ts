@@ -2,7 +2,7 @@ import { apiClient } from './api';
 
 export interface AuthResponse {
   token: string | null;
-  id: number;
+  id: string;
   nombre: string;
   email: string;
   mensaje: string;
