@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Farm } from '../../farms/entities/farm.entity';
 
 export enum UserRole {
   PRODUCTOR = 'productor',
@@ -60,6 +62,9 @@ export class User {
 
   @Column({ type: 'boolean', name: 'is_active', default: true })
   isActive: boolean;
+
+  @OneToMany(() => Farm, (farm) => farm.owner)
+  farms: Farm[];
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;

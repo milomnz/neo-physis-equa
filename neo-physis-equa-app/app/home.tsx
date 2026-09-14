@@ -89,6 +89,16 @@ export default function HomeScreen() {
       </View>
 
       <TouchableOpacity
+        accessibilityLabel="Gestionar mis fincas"
+        accessibilityHint="Abre la pantalla de gestión de fincas para inscribir predios y diagnosticar plagas"
+        accessibilityRole="button"
+        onPress={() => router.push('/farms')}
+        className="mt-6 items-center rounded-2xl bg-emerald-600 px-6 py-4 shadow-sm"
+      >
+        <Text className="text-base font-bold text-white">🌾 Gestionar mis Fincas</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         onPress={handleLogout}
         className="mt-6 items-center rounded-xl border border-rose-200 bg-rose-50 px-6 py-3.5"
       >

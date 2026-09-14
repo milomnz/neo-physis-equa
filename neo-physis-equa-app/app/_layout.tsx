@@ -16,6 +16,7 @@ export default function RootLayout() {
       <Stack.Screen name="login" options={{ title: 'Iniciar sesión' }} />
       <Stack.Screen name="register" options={{ title: 'Crear cuenta' }} />
       <Stack.Screen name="home" options={{ headerShown: false }} />
+      <Stack.Screen name="farms/index" options={{ title: 'Gestión de Fincas Accesible' }} />
     </Stack>
   );
 }
