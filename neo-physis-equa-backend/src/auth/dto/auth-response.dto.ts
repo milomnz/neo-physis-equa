@@ -4,4 +4,7 @@ export interface AuthResponse {
   nombre: string;
   email: string;
   mensaje: string;
+  role?: string;
+  accessibilityProfile?: Record<string, unknown> | null;
+  disabilityType?: string | null;
 }

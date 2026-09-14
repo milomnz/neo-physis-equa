@@ -6,6 +6,9 @@ export interface Session {
   id: string;
   nombre: string;
   email: string;
+  role?: string;
+  accessibilityProfile?: Record<string, unknown> | null;
+  disabilityType?: string | null;
 }
 
 const TOKEN_KEY = 'auth_token';
@@ -42,7 +45,14 @@ export async function saveSession(session: Session): Promise<void> {
   await writeKey(TOKEN_KEY, session.token);
   await writeKey(
     USER_KEY,
-    JSON.stringify({ id: session.id, nombre: session.nombre, email: session.email }),
+    JSON.stringify({
+      id: session.id,
+      nombre: session.nombre,
+      email: session.email,
+      role: session.role,
+      accessibilityProfile: session.accessibilityProfile,
+      disabilityType: session.disabilityType,
+    }),
   );
 }
 
@@ -60,9 +70,12 @@ export async function getSession(): Promise<Session | null> {
       id: user.id ?? '',
       nombre: user.nombre ?? '',
       email: user.email ?? '',
+      role: user.role ?? undefined,
+      accessibilityProfile: user.accessibilityProfile ?? undefined,
+      disabilityType: user.disabilityType ?? undefined,
     };
   } catch {
-    return { token, id: '', nombre: '', email: '' };
+    return { token, id: '', nombre: '', email: '', role: undefined };
   }
 }
 

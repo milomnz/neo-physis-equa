@@ -20,6 +20,14 @@ interface FormErrors {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const DISABILITY_OPTIONS = [
+  { value: 'ninguna', label: 'Ninguna' },
+  { value: 'motora', label: 'Motora' },
+  { value: 'visual', label: 'Visual' },
+  { value: 'auditiva', label: 'Auditiva' },
+  { value: 'intelectual', label: 'Intelectual' },
+];
+
 export default function RegisterScreen() {
   const router = useRouter();
   const [nombre, setNombre] = useState('');
@@ -28,6 +36,9 @@ export default function RegisterScreen() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [disability, setDisability] = useState('ninguna');
+  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [highContrast, setHighContrast] = useState(false);
 
   const validate = (): boolean => {
     const next: FormErrors = {};
@@ -62,9 +73,11 @@ export default function RegisterScreen() {
     }
 
     const payload: RegisterData = {
-      nombre: nombre.trim(),
+      name: nombre.trim(),
       email: email.trim(),
       password,
+      disabilityType: disability === 'ninguna' ? null : disability,
+      accessibilityProfile: { ttsEnabled, highContrast },
     };
 
     setLoading(true);
@@ -158,6 +171,56 @@ export default function RegisterScreen() {
           {errors.password && (
             <Text className="mt-1 text-xs text-red-500">{errors.password}</Text>
           )}
+        </View>
+
+        <View className="mb-6">
+          <Text className="mb-1 text-sm font-medium text-slate-700">Tipo de discapacidad (opcional)</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {DISABILITY_OPTIONS.map((opt) => {
+              const active = disability === opt.value;
+              return (
+                <TouchableOpacity
+                  key={opt.value}
+                  onPress={() => setDisability(opt.value)}
+                  className={`rounded-full border px-4 py-2 ${
+                    active ? 'border-emerald-500 bg-emerald-500' : 'border-slate-300 bg-white'
+                  }`}
+                >
+                  <Text className={`text-sm ${active ? 'font-medium text-white' : 'text-slate-700'}`}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        <View className="mb-6">
+          <Text className="mb-2 text-sm font-medium text-slate-700">Preferencias de accesibilidad</Text>
+          <View className="space-y-2">
+            <TouchableOpacity
+              onPress={() => setTtsEnabled((v) => !v)}
+              className={`flex-row items-center justify-between rounded-xl border px-4 py-3 ${
+                ttsEnabled ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 bg-white'
+              }`}
+            >
+              <Text className="text-sm text-slate-700">Lectura en voz alta</Text>
+              <Text className={`text-sm font-semibold ${ttsEnabled ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {ttsEnabled ? 'Activada' : 'Desactivada'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setHighContrast((v) => !v)}
+              className={`flex-row items-center justify-between rounded-xl border px-4 py-3 ${
+                highContrast ? 'border-emerald-500 bg-emerald-50' : 'border-slate-300 bg-white'
+              }`}
+            >
+              <Text className="text-sm text-slate-700">Alto contraste</Text>
+              <Text className={`text-sm font-semibold ${highContrast ? 'text-emerald-600' : 'text-slate-400'}`}>
+                {highContrast ? 'Activada' : 'Desactivada'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <TouchableOpacity

@@ -6,12 +6,17 @@ export interface AuthResponse {
   nombre: string;
   email: string;
   mensaje: string;
+  role?: string;
+  accessibilityProfile?: Record<string, unknown> | null;
+  disabilityType?: string | null;
 }
 
 export interface RegisterData {
-  nombre: string;
+  name: string;
   email: string;
   password: string;
+  disabilityType?: string | null;
+  accessibilityProfile?: Record<string, unknown>;
 }
 
 export interface LoginData {
@@ -23,9 +28,13 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
   return apiClient<AuthResponse>('/api/auth/registro', {
     method: 'POST',
     body: {
-      nombre: data.nombre,
+      name: data.name,
       email: data.email,
       password: data.password,
+      ...(data.disabilityType !== undefined ? { disabilityType: data.disabilityType } : {}),
+      ...(data.accessibilityProfile !== undefined
+        ? { accessibilityProfile: data.accessibilityProfile }
+        : {}),
     },
   });
 }

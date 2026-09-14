@@ -27,6 +27,9 @@ export class AuthService {
       nombre: user.name,
       email: user.email,
       mensaje: 'Registro exitoso',
+      role: user.role,
+      accessibilityProfile: user.accessibilityProfile,
+      disabilityType: user.disabilityType,
     };
   }
 
@@ -48,6 +51,9 @@ export class AuthService {
       nombre: user.name,
       email: user.email,
       mensaje: 'Login exitoso',
+      role: user.role,
+      accessibilityProfile: user.accessibilityProfile,
+      disabilityType: user.disabilityType,
     };
   }
 
@@ -62,6 +68,9 @@ export class AuthService {
       nombre: user.name,
       email: user.email,
       mensaje: 'Usuario autenticado',
+      role: user.role,
+      accessibilityProfile: user.accessibilityProfile,
+      disabilityType: user.disabilityType,
     };
   }
 }
