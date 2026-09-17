@@ -79,3 +79,44 @@ La primera entidad de dominio registrada en el sistema es la **Finca (`Farm`)**,
 
 - `neo-physis-equa-backend/`: Servidor API REST desarrollado en NestJS con TypeORM y PostgreSQL.
 - `neo-physis-equa-app/`: Aplicación móvil desarrollada en React Native / Expo con soporte NativeWind y accesibilidad integral.
+
+---
+
+## Guia de instalacion y puesta en marcha
+
+### 1) Base de datos (PostgreSQL)
+
+Crea la base de datos (por defecto: `neo_physis_equa_db`). Ejemplo:
+
+    CREATE DATABASE neo_physis_equa_db;
+
+### 2) Backend (NestJS)
+
+    cd neo-physis-equa-backend
+    npm install
+    copy .env.example .env      # Linux/macOS: cp .env.example .env
+
+Edita `.env` con las credenciales de tu PostgreSQL y un `JWT_SECRET` propio, luego:
+
+    npm run build
+    npm run start:dev           # API en http://localhost:8080
+
+Las tablas se crean automaticamente al arrancar (TypeORM con `synchronize`).
+
+Endpoints (protegidos con JWT excepto registro/login):
+
+    /api/auth/registro  (POST)   /api/auth/login  (POST)   /api/auth/me  (GET)
+    /api/farms          (CRUD)   /api/crops (CRUD, filtro ?farmId=)   /api/pests (CRUD, filtro ?cropId=)
+
+Flujo de la app: Finca -> Cultivos -> Plagas (una plaga se asocia a un cultivo).
+
+### 3) App movil (React Native / Expo SDK 57)
+
+    cd neo-physis-equa-app
+    npm install
+    npx expo start               # QR en dispositivo o presiona 'w' para navegador web
+
+La URL de la API se resuelve sola desde la red local. Si el backend corre en otra maquina,
+crea `neo-physis-equa-app/.env` con:
+
+    EXPO_PUBLIC_API_URL=http://IP_DEL_SERVIDOR:8080

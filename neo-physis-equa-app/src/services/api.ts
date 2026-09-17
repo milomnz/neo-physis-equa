@@ -51,7 +51,13 @@ export async function apiClient<T>(endpoint: string, options: ApiClientOptions =
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const mensaje = data?.mensaje ?? 'Error inesperado del servidor';
+    const raw = data?.message ?? data?.mensaje;
+    const mensaje =
+      typeof raw === 'string'
+        ? raw
+        : Array.isArray(raw)
+          ? raw.join(', ')
+          : 'Error inesperado del servidor';
     throw new ApiError(response.status, mensaje);
   }
 

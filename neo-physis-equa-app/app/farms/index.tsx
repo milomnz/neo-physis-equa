@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { createFarm, getFarms, type Farm } from '../../src/services/farms';
 import { getSession, type Session } from '../../src/services/session';
+import SearchBar from '../../src/components/SearchBar';
 
 export default function FarmsScreen() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function FarmsScreen() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [search, setSearch] = useState('');
 
   // Form states
   const [name, setName] = useState('');
@@ -90,6 +92,19 @@ export default function FarmsScreen() {
   };
 
   const isHighContrast = session?.accessibilityProfile?.highContrast === true;
+
+  const filteredFarms = search.trim()
+    ? farms.filter((farm) => {
+        const location = [farm.location?.vereda, farm.location?.municipio, farm.location?.departamento]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return (
+          farm.name.toLowerCase().includes(search.toLowerCase()) ||
+          location.includes(search.toLowerCase())
+        );
+      })
+    : farms;
 
   const containerBg = isHighContrast ? 'bg-black' : 'bg-slate-50';
   const cardBg = isHighContrast ? 'bg-zinc-900 border-2 border-amber-400' : 'bg-white border border-slate-200';
@@ -243,8 +258,22 @@ export default function FarmsScreen() {
         </View>
       ) : (
         <FlatList
-          data={farms}
+          data={filteredFarms}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            farms.length > 1 || filteredFarms.length === 0 ? (
+              <SearchBar
+                value={search}
+                onChangeText={setSearch}
+                placeholder="Buscar finca por nombre o ubicación"
+              />
+            ) : null
+          }
+          ListEmptyComponent={
+            <Text className={`py-6 text-center text-sm ${subTextColor}`}>
+              No se encontraron fincas con el criterio de búsqueda.
+            </Text>
+          }
           renderItem={({ item }) => (
             <View
               accessibilityLabel={`Finca ${item.name}, altitud ${item.altitude} metros sobre el nivel del mar.`}
@@ -277,6 +306,22 @@ export default function FarmsScreen() {
               >
                 <Text className={`text-base font-bold ${isHighContrast ? 'text-black' : 'text-white'}`}>
                   📷 Diagnosticar Plagas en esta Finca
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                accessibilityLabel={`Ver y gestionar la finca ${item.name}`}
+                accessibilityHint="Abre el detalle de la finca para editarla, eliminarla o ver sus cultivos"
+                accessibilityRole="button"
+                onPress={() => router.push(`/farms/${item.id}`)}
+                className={`mt-3 items-center rounded-xl border py-3 ${
+                  isHighContrast
+                    ? 'border-amber-400 bg-black'
+                    : 'border-emerald-600 bg-white'
+                }`}
+              >
+                <Text className={`text-base font-bold ${isHighContrast ? 'text-amber-400' : 'text-emerald-700'}`}>
+                  Gestión y Cultivos →
                 </Text>
               </TouchableOpacity>
             </View>
