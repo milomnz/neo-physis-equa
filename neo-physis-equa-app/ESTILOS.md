@@ -1,94 +1,243 @@
-# ESTILOS.md
+# Estilos estándar · Neo Physis Equa móvil
 
-Guía de clases de Tailwind para las pantallas de la aplicación.
+Cadenas de NativeWind que ya usa la app. **Copia de aquí, no inventes una
+variante nueva.** Si algo se repite tres veces, se vuelve componente en
+`src/components/`.
 
-Regla obligatoria: si una combinación de clases se repite tres veces, se vuelve
-un componente en `src/components/`. En el proyecto de referencia eso ya pasó con
-`Button`, `Field`, `Select` y `Badge`.
+Regla base: primero busca el componente (`Button`, `Field`, `Select`,
+`Badge`). Solo si no existe, usa las clases sueltas de este documento.
 
-## 1. Paleta
+---
 
-| Rol | Clases |
-| --- | --- |
-| Fondo de pantalla | `bg-slate-900` |
-| Superficie / card | `bg-slate-800` |
-| Borde | `border-slate-700` |
-| Label / texto secundario | `text-slate-300` / `text-slate-400` |
-| Texto principal / títulos | `text-white` |
-| Acento principal | `bg-blue-500` / `text-blue-400` |
-| Error | `text-red-400` / `border-red-500` / `bg-red-500/10` |
-| Éxito | `text-green-400` / `border-green-500` / `bg-green-500/10` |
-| Placeholder | `placeholderTextColor="#64748b"` (slate-500) |
+## Paleta
 
-## 2. Contenedores de pantalla
+| Papel | Clase | Nota |
+|---|---|---|
+| Fondo de pantalla | `bg-neutral-50` | Todas las pantallas |
+| Superficie (tarjeta, barra) | `bg-white` | |
+| Primario / acción | `bg-blue-600`, `text-blue-600` | |
+| Borde | `border-neutral-300` (campos), `border-neutral-200` (separadores) | |
+| Texto fuerte | `text-neutral-900` | Títulos y contenido |
+| Texto secundario | `text-neutral-500` | Descripciones |
+| Texto tenue / metadatos | `text-neutral-400` | Fechas, ids |
+| Error | `text-red-600`, `bg-red-50`, `border-red-500` | |
 
-| Uso | Clases |
-| --- | --- |
-| Pantalla base | `flex-1 bg-slate-900` |
-| Pantalla centrada (home) | `flex-1 items-center justify-center bg-slate-900 px-6` |
-| Formulario con scroll | `contentContainerClassName="flex-grow justify-center px-6 py-10"` en `ScrollView` |
-| Loading | `flex-1 items-center justify-center bg-slate-900` + `ActivityIndicator color="#ffffff"` |
+`placeholderTextColor="#a3a3a3"` va como **prop**, no como clase: NativeWind
+no traduce `placeholder:` en React Native.
 
-## 3. Tipografía
+---
 
-| Rol | Clases |
-| --- | --- |
-| Título de pantalla | `text-3xl font-bold text-white` |
-| Subtítulo | `text-sm text-center text-slate-400` |
-| Label de campo | `text-sm font-medium text-slate-300` |
-| Texto de botón | `text-base font-semibold text-white` |
-| Texto de enlace | `text-sm font-semibold text-blue-400` |
-| Error de campo | `text-xs text-red-400` |
+## Contenedores
 
-## 4. Formularios
+```tsx
+// Pantalla simple
+<View className="flex-1 gap-6 bg-neutral-50 p-6">
 
-| Elemento | Clases |
-| --- | --- |
-| Input | `rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-base text-white` |
-| Botón primario | `items-center rounded-xl bg-blue-500 py-3.5 disabled:opacity-50` |
-| Botón peligro (borrar) | `items-center rounded-xl border border-red-500 bg-red-500/10 px-6 py-3` |
+// Pantalla centrada (login, acuse de recibo, error)
+<View className="flex-1 justify-center gap-5 bg-neutral-50 p-6">
 
-Validaciones de referencia (coinciden con el backend):
+// Pantalla con scroll (formularios largos)
+<ScrollView
+  className="flex-1 bg-neutral-50"
+  contentContainerClassName="gap-5 p-6"
+  keyboardShouldPersistTaps="handled">
 
-| Campo | Regla |
-| --- | --- |
-| `nombre` | obligatorio, entre 2 y 100 caracteres |
-| `email` | obligatorio, formato válido, máximo 150 caracteres |
-| `password` | obligatorio, mínimo 6 caracteres |
+// Tarjeta
+<View className="gap-2 rounded-2xl bg-white p-4">
 
-## 5. Listas
+// Barra superior fija (filtros)
+<View className="gap-3 border-b border-neutral-200 bg-white p-4">
 
-| Uso | Clases |
-| --- | --- |
-| Card de item | `rounded-2xl border border-slate-700 bg-slate-800 p-4` |
-| Fila de item | `flex-row items-center justify-between` |
-| Badge | `rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400` |
-| Texto de item | `text-base font-medium text-white` |
-| Texto de detalle | `text-sm text-slate-400` |
-| Barra de búsqueda | `rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 text-base text-white` |
-| Empty state | `flex-1 items-center justify-center bg-slate-900` + `text-sm text-slate-400` |
+// Barra inferior fija (acción principal)
+<View className="border-t border-neutral-200 bg-white p-4">
 
-## 6. Mensajes de error / éxito
+// Cargando
+<View className="flex-1 items-center justify-center bg-neutral-50">
+  <ActivityIndicator />
+</View>
+```
 
-| Uso | Clases |
-| --- | --- |
-| Error | `mb-4 rounded-xl border border-red-500 bg-red-500/10 p-3` + `text-center text-sm text-red-400` |
-| Éxito | `mb-4 rounded-xl border border-green-500 bg-green-500/10 p-3` + `text-center text-sm text-green-400` |
+El espaciado entre hijos es `gap-*`, nunca `mt-*` en cada hijo.
+`gap-6` entre bloques, `gap-5` entre campos de formulario, `gap-3`/`gap-2`
+dentro de una tarjeta, `gap-1.5` entre etiqueta y control.
 
-## 7. Confirmación de borrado
+---
 
-Diálogo/confirmación antes de eliminar: alert del sistema operativo
-(`Alert.alert`) con mensaje explícito, botón `Cancelar` y botón destructivo
-`Eliminar`.
+## Tipografía
 
-## 8. Componentes compartidos (`src/components/`)
+```tsx
+<Text className="text-2xl font-bold text-neutral-900">   // Título de pantalla
+<Text className="text-xl font-bold text-neutral-900">    // Título de sección/tarjeta
+<Text className="font-semibold text-neutral-900">        // Título de elemento en lista
+<Text className="text-neutral-500">                      // Texto secundario
+<Text className="text-xs text-neutral-400">              // Fecha, id, metadato
+<Text className="font-semibold text-neutral-700">        // Etiqueta de un campo
+```
 
-Cuando una combinación de clases se repita tres veces, debe extraerse a un
-componente. Componentes previstos (a implementar en su fase):
+---
 
-| Componente | Clases base |
-| --- | --- |
-| `Button` | variante primaria y de peligro de la sección 4 |
-| `Field` | label + input + error de campo (secciones 3 y 4) |
-| `Badge` | clase de badge de la sección 5 |
-| `Alert` | mensajes de error/éxito de la sección 6 |
+## Botón → usa `Button`
+
+`src/components/Button.tsx` es **el** botón del proyecto. No escribas otro
+`Pressable` con fondo azul.
+
+```tsx
+import Button from '../src/components/Button';
+
+// Primario
+<Button text="Enviar solicitud" onPress={handleSubmit(submit)} />
+
+// Secundario (borde, sin relleno)
+<Button text="Volver" onPress={() => router.back()} secondary />
+
+// Deshabilitado mientras se envía: el texto también cambia
+<Button
+  text={formState.isSubmitting ? 'Guardando…' : 'Guardar cambios'}
+  onPress={handleSubmit(submit)}
+  disabled={formState.isSubmitting}
+/>
+
+// Ajuste puntual (se suma a las clases base)
+<Button text="Eliminar caso" onPress={remove} secondary className="border-red-500" />
+```
+
+Props: `text`, `onPress`, `disabled?`, `secondary?`, `className?`.
+
+Por dentro (referencia, no lo copies):
+
+| Parte | Clases |
+|---|---|
+| Base | `items-center rounded-xl p-4 active:opacity-80 disabled:opacity-50` |
+| Primario | `bg-blue-600` + texto `font-semibold text-white` |
+| Secundario | `border border-neutral-300` + texto `font-semibold text-neutral-700` |
+
+---
+
+## Campo de texto → usa `Field`
+
+`src/components/Field.tsx` ya trae etiqueta, borde rojo al fallar y el mensaje
+de error. Solo dentro de un formulario de react-hook-form.
+
+```tsx
+<Field
+  control={control}
+  name="email"
+  label="Correo"
+  keyboardType="email-address"
+  placeholder="nombre@autonoma.edu.co"
+  rules={{
+    required: 'El correo es obligatorio',
+    pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
+  }}
+/>
+
+// Área de texto
+<Field
+  control={control}
+  name="description"
+  label="¿Qué está pasando?"
+  multiline
+  numberOfLines={5}
+  textAlignVertical="top"   // sin esto el texto se centra en Android
+  className="h-32"
+/>
+```
+
+Input suelto (fuera de un formulario, como el buscador):
+
+```tsx
+<TextInput
+  className="rounded-xl border border-neutral-300 bg-white p-3"
+  placeholderTextColor="#a3a3a3"
+/>
+```
+
+Clases que aplica `Field` por dentro:
+
+| Parte | Clases |
+|---|---|
+| Grupo | `gap-1.5` |
+| Etiqueta | `font-semibold text-neutral-700` |
+| Input | `rounded-xl border bg-white p-3.5` + `border-neutral-300` / `border-red-500` |
+| Error del campo | `text-xs text-red-600` |
+
+---
+
+## Selección de una opción → usa `Select`
+
+```tsx
+<Select control={control} name="priority" label="Prioridad" options={PRIORITIES} />
+
+<Select
+  control={control}
+  name="categoryId"
+  label="Categoría"
+  options={categories.map((c) => ({ value: c.id, label: `${c.name} · ${c.slaHours}h` }))}
+  empty="No se pudo cargar el catálogo."
+/>
+```
+
+Chip (la opción individual), por si hay que hacer uno fuera del formulario:
+
+```tsx
+<Pressable
+  className={`rounded-full border px-4 py-2 active:opacity-70 ${
+    active ? 'border-blue-600 bg-blue-600' : 'border-neutral-300 bg-white'
+  }`}>
+  <Text className={`text-xs font-semibold ${active ? 'text-white' : 'text-neutral-600'}`}>
+```
+
+---
+
+## Etiqueta de estado/prioridad → usa `Badge`
+
+```tsx
+<Badge value={ticket.status} />
+<Badge value={ticket.priority} />
+```
+
+Base: `self-start rounded-full px-2.5 py-1 text-[10px] font-bold`. El color
+sale del mapa `COLORS` en `src/components/Badge.tsx`; **valor nuevo del
+backend ⇒ entrada nueva ahí**, no un color en la pantalla.
+
+---
+
+## Errores del formulario completo
+
+Un solo formato para el error que devuelve el servidor:
+
+```tsx
+{!!formState.errors.root && (
+  <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
+    {formState.errors.root.message}
+  </Text>
+)}
+```
+
+Error que impide cargar la pantalla: `text-center text-red-700` + un
+`<Button ... secondary />` para volver.
+
+---
+
+## Lista
+
+```tsx
+<FlatList
+  contentContainerClassName="gap-3 p-4"
+  ...
+/>
+
+// Fila pulsable
+<Pressable className="gap-2 rounded-2xl bg-white p-4 active:opacity-80">
+
+// Vacío o error
+<Text className="p-6 text-center text-neutral-500">
+```
+
+---
+
+## Enlace
+
+```tsx
+<Link href="/login" className="text-center text-blue-600">
+```

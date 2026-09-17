@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import Button from '../src/components/Button';
 import { clearSession, getSession, type Session } from '../src/services/session';
 
 export default function HomeScreen() {
@@ -22,32 +23,27 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-900">
-        <ActivityIndicator color="#ffffff" size="large" />
+      <View className="flex-1 items-center justify-center bg-neutral-50">
+        <ActivityIndicator />
       </View>
     );
   }
 
   if (!session || !session.token) {
-    return <ActivityIndicator color="#ffffff" size="large" />;
+    return <ActivityIndicator />;
   }
 
   return (
-    <View className="flex-1 items-center justify-center bg-slate-900 px-6">
-      <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-500">
+    <View className="flex-1 items-center justify-center gap-5 bg-neutral-50 p-6">
+      <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-600">
         <Text className="text-2xl font-bold text-white">N</Text>
       </View>
-      <Text className="mb-1 text-3xl font-bold text-white">Hola, {session.nombre}</Text>
-      <Text className="mb-10 text-center text-sm text-slate-400">
+      <Text className="text-2xl font-bold text-neutral-900">Hola, {session.nombre}</Text>
+      <Text className="text-center text-neutral-500">
         Has iniciado sesión correctamente
       </Text>
 
-      <TouchableOpacity
-        onPress={handleLogout}
-        className="items-center rounded-xl border border-red-500 bg-red-500/10 px-6 py-3"
-      >
-        <Text className="text-base font-semibold text-red-400">Cerrar sesión</Text>
-      </TouchableOpacity>
+      <Button text="Cerrar sesión" onPress={handleLogout} secondary className="border-red-500" />
     </View>
   );
 }
