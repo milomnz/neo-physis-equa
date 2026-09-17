@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import Button from '../src/components/Button';
 import { clearSession, getSession, type Session } from '../src/services/session';
 
 const DISABILITY_LABELS: Record<string, string> = {
@@ -29,14 +30,14 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-50">
-        <ActivityIndicator color="#10b981" size="large" />
+      <View className="flex-1 items-center justify-center bg-neutral-50">
+        <ActivityIndicator />
       </View>
     );
   }
 
   if (!session || !session.token) {
-    return <ActivityIndicator color="#10b981" size="large" />;
+    return <ActivityIndicator />;
   }
 
   const profile = session.accessibilityProfile ?? {};
@@ -48,62 +49,16 @@ export default function HomeScreen() {
       : null;
 
   return (
-    <View className="flex-1 justify-center bg-slate-50 px-6">
-      <View className="items-center rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <View className="mb-4 h-20 w-20 items-center justify-center rounded-3xl bg-emerald-500">
-          <Text className="text-4xl font-bold text-white">N</Text>
-        </View>
-
-        <Text className="text-center text-2xl font-bold text-slate-900">
-          ¡Hola, {session.nombre}!
-        </Text>
-        <Text className="mt-2 text-center text-sm text-slate-500">
-          {session.email}
-        </Text>
-
-        <View className="mt-6 w-full rounded-2xl border border-slate-100 bg-slate-50 p-4">
-          <Text className="mb-3 text-center text-sm font-semibold text-slate-700">
-            Mi perfil de accesibilidad
-          </Text>
-          {disability && (
-            <View className="mb-3 self-center rounded-full bg-violet-100 px-4 py-1.5">
-              <Text className="text-xs font-semibold text-violet-700">
-                Discapacidad: {DISABILITY_LABELS[disability] ?? disability}
-              </Text>
-            </View>
-          )}
-
-          <View className="flex-row items-center justify-between border-b border-slate-200 py-2">
-            <Text className="text-sm text-slate-600">Lectura en voz alta</Text>
-            <Text className={`text-sm font-semibold ${ttsEnabled ? 'text-emerald-600' : 'text-slate-400'}`}>
-              {ttsEnabled ? 'Activada' : 'Desactivada'}
-            </Text>
-          </View>
-          <View className="flex-row items-center justify-between py-2">
-            <Text className="text-sm text-slate-600">Alto contraste</Text>
-            <Text className={`text-sm font-semibold ${highContrast ? 'text-emerald-600' : 'text-slate-400'}`}>
-              {highContrast ? 'Activada' : 'Desactivada'}
-            </Text>
-          </View>
-        </View>
+    <View className="flex-1 items-center justify-center gap-5 bg-neutral-50 p-6">
+      <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-600">
+        <Text className="text-2xl font-bold text-white">N</Text>
       </View>
+      <Text className="text-2xl font-bold text-neutral-900">Hola, {session.nombre}</Text>
+      <Text className="text-center text-neutral-500">
+        Has iniciado sesión correctamente
+      </Text>
 
-      <TouchableOpacity
-        accessibilityLabel="Gestionar mis fincas"
-        accessibilityHint="Abre la pantalla de gestión de fincas para inscribir predios y diagnosticar plagas"
-        accessibilityRole="button"
-        onPress={() => router.push('/farms')}
-        className="mt-6 items-center rounded-2xl bg-emerald-600 px-6 py-4 shadow-sm"
-      >
-        <Text className="text-base font-bold text-white">🌾 Gestionar mis Fincas</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={handleLogout}
-        className="mt-6 items-center rounded-xl border border-rose-200 bg-rose-50 px-6 py-3.5"
-      >
-        <Text className="text-base font-semibold text-rose-600">Cerrar sesión</Text>
-      </TouchableOpacity>
+      <Button text="Cerrar sesión" onPress={handleLogout} secondary className="border-red-500" />
     </View>
   );
 }
