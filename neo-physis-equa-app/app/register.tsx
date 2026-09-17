@@ -30,9 +30,11 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await register({
-        nombre: data.nombre.trim(),
+        name: data.nombre.trim(),
         email: data.email.trim(),
         password: data.password,
+        disabilityType: disability === 'ninguna' ? null : disability,
+        accessibilityProfile: { ttsEnabled, highContrast },
       });
       router.replace('/login');
     } catch (err) {
