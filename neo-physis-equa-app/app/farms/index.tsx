@@ -1,33 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native';
+import { useForm } from 'react-hook-form';
 import { useRouter } from 'expo-router';
+import Button from '../../src/components/Button';
+import Field from '../../src/components/Field';
+import SearchBar from '../../src/components/SearchBar';
 import { createFarm, getFarms, type Farm } from '../../src/services/farms';
 import { getSession, type Session } from '../../src/services/session';
-import SearchBar from '../../src/components/SearchBar';
+
+interface FarmForm {
+  name: string;
+  vereda: string;
+  municipio: string;
+  altitude: string;
+}
 
 export default function FarmsScreen() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [farms, setFarms] = useState<Farm[]>([]);
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState('');
+  const [success, setSuccess] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  // Form states
-  const [name, setName] = useState('');
-  const [vereda, setVereda] = useState('');
-  const [municipio, setMunicipio] = useState('');
-  const [altitude, setAltitude] = useState('');
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors },
+  } = useForm<FarmForm>();
 
   const loadFarms = useCallback(async () => {
     try {
@@ -43,55 +47,57 @@ export default function FarmsScreen() {
       const data = await getFarms();
       setFarms(data);
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Error al cargar las fincas';
-      Alert.alert('Error', errorMsg);
+      setError('root', {
+        type: 'manual',
+        message: err instanceof Error ? err.message : 'Error al cargar las fincas',
+      });
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, setError]);
 
   useEffect(() => {
     loadFarms();
   }, [loadFarms]);
 
-  const handleCreateFarm = async () => {
-    if (!name.trim()) {
-      Alert.alert('Campo requerido', 'Por favor ingresa el nombre de la finca.');
-      return;
-    }
-    const parsedAltitude = parseFloat(altitude);
-    if (isNaN(parsedAltitude) || parsedAltitude < 0) {
-      Alert.alert('Altitud inválida', 'Por favor ingresa una altitud válida en metros sobre el nivel del mar.');
-      return;
-    }
-
+  const onSubmit = async (data: FarmForm) => {
+    setSubmitting(true);
+    setSuccess('');
     try {
-      setSubmitting(true);
       await createFarm({
-        name: name.trim(),
+        name: data.name.trim(),
         location: {
-          vereda: vereda.trim() || undefined,
-          municipio: municipio.trim() || undefined,
+          vereda: data.vereda.trim() || undefined,
+          municipio: data.municipio.trim() || undefined,
         },
-        altitude: parsedAltitude,
+        altitude: parseFloat(data.altitude),
       });
-
-      Alert.alert('¡Éxito!', 'Finca registrada correctamente.');
-      setName('');
-      setVereda('');
-      setMunicipio('');
-      setAltitude('');
+      reset({ name: '', vereda: '', municipio: '', altitude: '' });
       setShowForm(false);
+      setSuccess('Finca registrada correctamente.');
       loadFarms();
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Error al registrar la finca';
-      Alert.alert('Error', errorMsg);
+      setError('root', {
+        type: 'manual',
+        message: err instanceof Error ? err.message : 'Error al registrar la finca',
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   const isHighContrast = session?.accessibilityProfile?.highContrast === true;
+
+  const containerBg = isHighContrast ? 'bg-black' : 'bg-neutral-50';
+  const cardBg = isHighContrast ? 'bg-zinc-900 border-2 border-amber-400' : 'bg-white border border-neutral-200';
+  const textColor = isHighContrast ? 'text-amber-400' : 'text-neutral-900';
+  const subTextColor = isHighContrast ? 'text-zinc-300' : 'text-neutral-500';
+  const chipBg = isHighContrast ? 'bg-zinc-800 text-amber-400' : 'bg-neutral-100 text-neutral-600';
+  const inputClassName = isHighContrast
+    ? 'rounded-xl border border-amber-400 bg-black text-amber-400 p-3.5'
+    : undefined;
+  const labelClassName = isHighContrast ? 'text-amber-400' : undefined;
+  const errorBanner = isHighContrast ? 'bg-red-950 text-red-400' : 'bg-red-50 text-red-700';
 
   const filteredFarms = search.trim()
     ? farms.filter((farm) => {
@@ -106,160 +112,120 @@ export default function FarmsScreen() {
       })
     : farms;
 
-  const containerBg = isHighContrast ? 'bg-black' : 'bg-slate-50';
-  const cardBg = isHighContrast ? 'bg-zinc-900 border-2 border-amber-400' : 'bg-white border border-slate-200';
-  const textColor = isHighContrast ? 'text-amber-400' : 'text-slate-900';
-  const subTextColor = isHighContrast ? 'text-zinc-300' : 'text-slate-600';
-  const primaryButtonBg = isHighContrast ? 'bg-amber-400' : 'bg-emerald-600';
-  const primaryButtonText = isHighContrast ? 'text-black font-bold' : 'text-white font-semibold';
-
   if (loading) {
     return (
       <View className={`flex-1 items-center justify-center ${containerBg}`}>
-        <ActivityIndicator color={isHighContrast ? '#fbbf24' : '#059669'} size="large" />
+        <ActivityIndicator color={isHighContrast ? '#fbbf24' : '#2563eb'} size="large" />
       </View>
     );
   }
 
   return (
-    <View className={`flex-1 ${containerBg} px-4 py-6`}>
-      {/* Dynamic Header */}
-      <View className="mb-4 flex-row items-center justify-between">
-        <View>
-          <Text className={`text-2xl font-bold ${textColor}`}>Mis Fincas 🌾</Text>
-          <Text className={`text-sm ${subTextColor}`}>
-            Entidad agronómica para predicción de plagas
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          accessibilityLabel={showForm ? 'Cerrar formulario de registro' : 'Registrar nueva finca'}
-          accessibilityHint="Muestra u oculta el formulario para inscribir un nuevo terreno agrícola"
-          accessibilityRole="button"
-          onPress={() => setShowForm(!showForm)}
-          className={`rounded-2xl px-4 py-3 ${primaryButtonBg}`}
-        >
-          <Text className={`text-base ${primaryButtonText}`}>
-            {showForm ? '✕ Cancelar' : '+ Nueva Finca'}
-          </Text>
-        </TouchableOpacity>
+    <View className={`flex-1 ${containerBg} p-6`}>
+      <View className="mb-5 gap-1">
+        <Text className={`text-2xl font-bold ${textColor}`}>Mis Fincas</Text>
+        <Text className={`text-sm ${subTextColor}`}>
+          Terrenos agrícolas para el diagnóstico de plagas
+        </Text>
       </View>
 
-      {/* Accessible Registration Form */}
+      <View className="mb-5 flex-row items-center justify-between gap-3">
+        <Button
+          text={showForm ? 'Cancelar' : '+ Nueva finca'}
+          onPress={() => setShowForm((v) => !v)}
+          variant={isHighContrast ? 'amber' : undefined}
+          accessibilityLabel={showForm ? 'Cerrar formulario de registro' : 'Registrar nueva finca'}
+          accessibilityHint="Muestra u oculta el formulario para inscribir un nuevo terreno agrícola"
+          className="flex-1"
+        />
+      </View>
+
+      {success ? (
+        <View className="mb-4 rounded-lg bg-green-50 p-3">
+          <Text className="text-center text-sm font-semibold text-green-700">{success}</Text>
+        </View>
+      ) : null}
+      {errors.root?.message ? (
+        <View className={`mb-4 rounded-lg p-3 ${errorBanner}`}>
+          <Text className="text-center text-sm font-semibold">{errors.root.message}</Text>
+        </View>
+      ) : null}
+
       {showForm && (
-        <ScrollView className={`mb-6 rounded-3xl p-5 ${cardBg}`}>
-          <Text className={`mb-4 text-xl font-bold ${textColor}`}>
-            Inscribir Terreno Agrícola
-          </Text>
+        <View className={`mb-6 gap-5 rounded-2xl p-4 ${cardBg}`}>
+          <Text className={`text-xl font-bold ${textColor}`}>Registrar finca</Text>
 
-          <Text className={`mb-1 text-sm font-semibold ${subTextColor}`}>
-            Nombre de la Finca *
-          </Text>
-          <TextInput
-            accessibilityLabel="Nombre de la finca"
-            accessibilityHint="Ingresa el nombre descriptivo de tu finca o predio"
-            value={name}
-            onChangeText={setName}
+          <Field
+            control={control}
+            name="name"
+            label="Nombre de la finca *"
+            autoCapitalize="words"
             placeholder="ej. Finca El Paraíso"
-            placeholderTextColor={isHighContrast ? '#a1a1aa' : '#94a3b8'}
-            className={`mb-4 rounded-xl border p-3.5 text-base ${
-              isHighContrast
-                ? 'border-amber-400 bg-black text-amber-400'
-                : 'border-slate-300 bg-white text-slate-900'
-            }`}
+            className={inputClassName}
+            labelClassName={labelClassName}
+            rules={{
+              required: 'El nombre de la finca es obligatorio',
+              maxLength: { value: 100, message: 'El nombre debe tener máximo 100 caracteres' },
+            }}
           />
-
-          <View className="flex-row space-x-3">
-            <View className="flex-1">
-              <Text className={`mb-1 text-sm font-semibold ${subTextColor}`}>
-                Vereda
-              </Text>
-              <TextInput
-                accessibilityLabel="Vereda"
-                accessibilityHint="Ingresa la vereda donde está ubicada la finca"
-                value={vereda}
-                onChangeText={setVereda}
-                placeholder="ej. La Esmeralda"
-                placeholderTextColor={isHighContrast ? '#a1a1aa' : '#94a3b8'}
-                className={`mb-4 rounded-xl border p-3.5 text-base ${
-                  isHighContrast
-                    ? 'border-amber-400 bg-black text-amber-400'
-                    : 'border-slate-300 bg-white text-slate-900'
-                }`}
-              />
-            </View>
-
-            <View className="flex-1">
-              <Text className={`mb-1 text-sm font-semibold ${subTextColor}`}>
-                Municipio
-              </Text>
-              <TextInput
-                accessibilityLabel="Municipio"
-                accessibilityHint="Ingresa el municipio de ubicación"
-                value={municipio}
-                onChangeText={setMunicipio}
-                placeholder="ej. Armero"
-                placeholderTextColor={isHighContrast ? '#a1a1aa' : '#94a3b8'}
-                className={`mb-4 rounded-xl border p-3.5 text-base ${
-                  isHighContrast
-                    ? 'border-amber-400 bg-black text-amber-400'
-                    : 'border-slate-300 bg-white text-slate-900'
-                }`}
-              />
-            </View>
-          </View>
-
-          <Text className={`mb-1 text-sm font-semibold ${subTextColor}`}>
-            Altitud (m.s.n.m.) *
-          </Text>
-          <TextInput
-            accessibilityLabel="Altitud en metros sobre el nivel del mar"
-            accessibilityHint="Ingresa la altitud numérica de la finca"
-            value={altitude}
-            onChangeText={setAltitude}
+          <Field
+            control={control}
+            name="vereda"
+            label="Vereda"
+            autoCapitalize="words"
+            placeholder="ej. La Esmeralda"
+            className={inputClassName}
+            labelClassName={labelClassName}
+            rules={{ maxLength: { value: 100, message: 'La vereda debe tener máximo 100 caracteres' } }}
+          />
+          <Field
+            control={control}
+            name="municipio"
+            label="Municipio"
+            autoCapitalize="words"
+            placeholder="ej. Armero"
+            className={inputClassName}
+            labelClassName={labelClassName}
+            rules={{ maxLength: { value: 100, message: 'El municipio debe tener máximo 100 caracteres' } }}
+          />
+          <Field
+            control={control}
+            name="altitude"
+            label="Altitud (m.s.n.m.) *"
             keyboardType="numeric"
             placeholder="ej. 1650"
-            placeholderTextColor={isHighContrast ? '#a1a1aa' : '#94a3b8'}
-            className={`mb-6 rounded-xl border p-3.5 text-base ${
-              isHighContrast
-                ? 'border-amber-400 bg-black text-amber-400'
-                : 'border-slate-300 bg-white text-slate-900'
-            }`}
+            className={inputClassName}
+            labelClassName={labelClassName}
+            rules={{
+              required: 'La altitud es obligatoria',
+              validate: (value) =>
+                (!isNaN(parseFloat(value)) && parseFloat(value) >= 0) ||
+                'Ingresa una altitud numérica válida mayor o igual a 0',
+            }}
           />
 
-          <TouchableOpacity
-            accessibilityLabel="Guardar finca"
-            accessibilityHint="Envía los datos de la finca al servidor"
-            accessibilityRole="button"
+          <Button
+            text={submitting ? 'Registrando…' : 'Registrar finca'}
+            onPress={handleSubmit(onSubmit)}
             disabled={submitting}
-            onPress={handleCreateFarm}
-            className={`items-center rounded-xl p-4 ${primaryButtonBg}`}
-          >
-            {submitting ? (
-              <ActivityIndicator color={isHighContrast ? '#000000' : '#ffffff'} />
-            ) : (
-              <Text className={`text-lg font-bold ${primaryButtonText}`}>
-                ✓ Registrar Finca
-              </Text>
-            )}
-          </TouchableOpacity>
-        </ScrollView>
+            variant={isHighContrast ? 'amber' : undefined}
+          />
+        </View>
       )}
 
-      {/* Farms List */}
       {farms.length === 0 ? (
-        <View className={`items-center justify-center rounded-3xl p-8 ${cardBg}`}>
-          <Text className={`text-center text-lg font-semibold ${textColor}`}>
-            No tienes fincas registradas
+        <View className={`flex-1 items-center justify-center gap-3 rounded-2xl p-6 ${cardBg}`}>
+          <Text className={`text-lg font-semibold ${textColor}`}>No tienes fincas registradas</Text>
+          <Text className={`text-center text-sm ${subTextColor}`}>
+            Registra tu primera finca para vincularla al diagnóstico de plagas.
           </Text>
-          <Text className={`mt-2 text-center text-sm ${subTextColor}`}>
-            Inscribe tu primera finca para vincularla a la cámara de detección de plagas.
-          </Text>
+          <Button text="+ Registrar finca" onPress={() => setShowForm(true)} variant={isHighContrast ? 'amber' : undefined} />
         </View>
       ) : (
         <FlatList
           data={filteredFarms}
           keyExtractor={(item) => item.id}
+          contentContainerClassName="gap-3"
           ListHeaderComponent={
             farms.length > 1 || filteredFarms.length === 0 ? (
               <SearchBar
@@ -270,60 +236,43 @@ export default function FarmsScreen() {
             ) : null
           }
           ListEmptyComponent={
-            <Text className={`py-6 text-center text-sm ${subTextColor}`}>
+            <Text className={`p-6 text-center text-sm ${subTextColor}`}>
               No se encontraron fincas con el criterio de búsqueda.
             </Text>
           }
           renderItem={({ item }) => (
             <View
-              accessibilityLabel={`Finca ${item.name}, altitud ${item.altitude} metros sobre el nivel del mar.`}
-              className={`mb-4 rounded-3xl p-5 shadow-sm ${cardBg}`}
+              accessibilityLabel={`Finca ${item.name}, altitud ${item.altitude} metros sobre el nivel del mar`}
+              className={`gap-3 rounded-2xl p-4 ${cardBg}`}
             >
-              <View className="flex-row items-center justify-between">
-                <Text className={`text-xl font-bold ${textColor}`}>{item.name}</Text>
-                <View className="rounded-full bg-emerald-100 px-3 py-1">
-                  <Text className="text-xs font-bold text-emerald-800">
-                    {item.altitude} m.s.n.m.
-                  </Text>
-                </View>
+              <View className="flex-row items-center justify-between gap-2">
+                <Text className={`flex-1 text-lg font-semibold ${textColor}`}>{item.name}</Text>
+                <Text className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${chipBg}`}>
+                  {item.altitude} m s. n. m.
+                </Text>
               </View>
 
-              <Text className={`mt-2 text-sm ${subTextColor}`}>
-                📍 Ubicación:{' '}
+              <Text className={`text-sm ${subTextColor}`}>
                 {[item.location?.vereda, item.location?.municipio]
                   .filter(Boolean)
-                  .join(', ') || 'No especificada'}
+                  .join(', ') || 'Ubicación no especificada'}
               </Text>
 
-              <TouchableOpacity
-                accessibilityLabel={`Iniciar escaner de cámara para la finca ${item.name}`}
+              <Button
+                text="Diagnosticar plagas"
+                onPress={() => Alert.alert('Escáner', `Preparando la cámara para analizar plagas en ${item.name}…`)}
+                variant={isHighContrast ? 'amber' : undefined}
+                accessibilityLabel={`Iniciar escáner de cámara para la finca ${item.name}`}
                 accessibilityHint="Abre el escáner de cámara para analizar plagas en este terreno"
-                accessibilityRole="button"
-                onPress={() => Alert.alert('Escáner Accesible', `Preparando cámara para predicción en ${item.name}...`)}
-                className={`mt-4 items-center rounded-xl py-3 ${
-                  isHighContrast ? 'bg-amber-400' : 'bg-slate-900'
-                }`}
-              >
-                <Text className={`text-base font-bold ${isHighContrast ? 'text-black' : 'text-white'}`}>
-                  📷 Diagnosticar Plagas en esta Finca
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
+              />
+              <Button
+                text="Ver y gestionar →"
+                onPress={() => router.push(`/farms/${item.id}`)}
+                secondary
+                variant={isHighContrast ? 'amberOutline' : undefined}
                 accessibilityLabel={`Ver y gestionar la finca ${item.name}`}
                 accessibilityHint="Abre el detalle de la finca para editarla, eliminarla o ver sus cultivos"
-                accessibilityRole="button"
-                onPress={() => router.push(`/farms/${item.id}`)}
-                className={`mt-3 items-center rounded-xl border py-3 ${
-                  isHighContrast
-                    ? 'border-amber-400 bg-black'
-                    : 'border-emerald-600 bg-white'
-                }`}
-              >
-                <Text className={`text-base font-bold ${isHighContrast ? 'text-amber-400' : 'text-emerald-700'}`}>
-                  Gestión y Cultivos →
-                </Text>
-              </TouchableOpacity>
+              />
             </View>
           )}
         />

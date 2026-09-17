@@ -12,6 +12,7 @@ interface FieldProps<T extends FieldValues> extends TextInputProps {
   name: Path<T>;
   label: string;
   rules?: RegisterOptions<T>;
+  labelClassName?: string;
 }
 
 export default function Field<T extends FieldValues>({
@@ -19,6 +20,7 @@ export default function Field<T extends FieldValues>({
   name,
   label,
   rules,
+  labelClassName,
   ...inputProps
 }: FieldProps<T>) {
   return (
@@ -28,7 +30,7 @@ export default function Field<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className="font-semibold text-neutral-700">{label}</Text>
+          <Text className={`font-semibold text-neutral-700 ${labelClassName}`}>{label}</Text>
           <TextInput
             className={`rounded-xl border bg-white p-3.5 ${
               error ? 'border-red-500' : 'border-neutral-300'
