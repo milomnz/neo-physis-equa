@@ -17,12 +17,20 @@ export class PestsService {
     return await this.pestRepository.save(pest);
   }
 
-  async findAll(): Promise<Pest[]> {
-    return await this.pestRepository.find();
+  async findAll(cropId?: string): Promise<Pest[]> {
+    const where = cropId ? { cropId } : {};
+    return await this.pestRepository.find({
+      where,
+      order: { createdAt: 'DESC' },
+      relations: { crop: true },
+    });
   }
 
   async findOne(id: string): Promise<Pest> {
-    const pest = await this.pestRepository.findOne({ where: { id } });
+    const pest = await this.pestRepository.findOne({
+      where: { id },
+      relations: { crop: true },
+    });
 
     if (!pest) {
       throw new NotFoundException(`Pest with ID ${id} not found`);

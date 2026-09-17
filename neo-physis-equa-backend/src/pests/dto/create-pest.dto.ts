@@ -1,7 +1,11 @@
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { Severity } from '../entities/pest.entity';
 
 export class CreatePestDto {
+  @IsUUID()
+  @IsNotEmpty()
+  cropId: string;
+
   @IsString()
   @IsNotEmpty()
   commonName: string;

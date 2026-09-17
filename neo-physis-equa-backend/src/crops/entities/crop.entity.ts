@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Farm } from '../../farms/entities/farm.entity';
+import { Pest } from '../../pests/entities/pest.entity';
 
 export enum GrowthStage {
   VEGETATIVO = 'vegetativo',
@@ -43,6 +45,9 @@ export class Crop {
 
   @Column({ type: 'text', nullable: true })
   notes: string;
+
+  @OneToMany(() => Pest, (pest) => pest.crop)
+  pests: Pest[];
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;

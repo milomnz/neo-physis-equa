@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CropsService } from './crops.service';
 import { CreateCropDto } from './dto/create-crop.dto';
 import { UpdateCropDto } from './dto/update-crop.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Controller('crops')
+@UseGuards(JwtAuthGuard)
+@Controller('api/crops')
 export class CropsController {
   constructor(private readonly cropsService: CropsService) {}
 
@@ -13,8 +26,8 @@ export class CropsController {
   }
 
   @Get()
-  findAll() {
-    return this.cropsService.findAll();
+  findAll(@Query('farmId') farmId?: string) {
+    return this.cropsService.findAll(farmId);
   }
 
   @Get(':id')

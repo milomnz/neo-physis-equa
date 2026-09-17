@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Crop } from '../../crops/entities/crop.entity';
 
 export enum Severity {
   BAJA = 'baja',
@@ -16,6 +19,13 @@ export enum Severity {
 export class Pest {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ name: 'crop_id', type: 'uuid' })
+  cropId: string;
+
+  @ManyToOne(() => Crop, (crop) => crop.pests, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'crop_id' })
+  crop: Crop;
 
   @Column({ type: 'varchar', length: 255 })
   commonName: string;

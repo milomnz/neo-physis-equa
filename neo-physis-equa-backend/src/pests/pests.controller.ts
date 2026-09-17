@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { PestsService } from './pests.service';
 import { CreatePestDto } from './dto/create-pest.dto';
 import { UpdatePestDto } from './dto/update-pest.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Controller('pests')
+@UseGuards(JwtAuthGuard)
+@Controller('api/pests')
 export class PestsController {
   constructor(private readonly pestsService: PestsService) {}
 
@@ -13,8 +26,8 @@ export class PestsController {
   }
 
   @Get()
-  findAll() {
-    return this.pestsService.findAll();
+  findAll(@Query('cropId') cropId?: string) {
+    return this.pestsService.findAll(cropId);
   }
 
   @Get(':id')

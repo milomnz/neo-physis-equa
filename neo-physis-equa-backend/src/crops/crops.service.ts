@@ -17,14 +17,19 @@ export class CropsService {
     return await this.cropRepository.save(crop);
   }
 
-  async findAll(): Promise<Crop[]> {
-    return await this.cropRepository.find({ relations: ['farm'] });
+  async findAll(farmId?: string): Promise<Crop[]> {
+    const where = farmId ? { farmId } : {};
+    return await this.cropRepository.find({
+      where,
+      order: { createdAt: 'DESC' },
+      relations: { farm: true },
+    });
   }
 
   async findOne(id: string): Promise<Crop> {
     const crop = await this.cropRepository.findOne({
       where: { id },
-      relations: ['farm'],
+      relations: { farm: true },
     });
 
     if (!crop) {

@@ -1,7 +1,11 @@
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 import { Severity } from '../entities/pest.entity';
 
 export class UpdatePestDto {
+  @IsUUID()
+  @IsOptional()
+  cropId?: string;
+
   @IsString()
   @IsOptional()
   commonName?: string;
