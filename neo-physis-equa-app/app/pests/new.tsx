@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
 import Select from '../../src/components/Select';
+import { useAccessibility } from '../../src/accessibility/context';
 import { getCrops, type Crop } from '../../src/services/crops';
 import { createPest, SEVERITIES, type Severity } from '../../src/services/pests';
 import { getSession } from '../../src/services/session';
@@ -19,6 +20,7 @@ interface PestForm {
 
 export default function NewPestScreen() {
   const router = useRouter();
+  const { palette } = useAccessibility();
   const [crops, setCrops] = useState<Crop[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,28 +77,28 @@ export default function NewPestScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} />
       </View>
     );
   }
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-neutral-50"
+      className={`flex-1 ${palette.bg}`}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View className="flex-1 justify-center gap-5 p-6">
         <View className="items-center gap-1">
-          <Text className="text-2xl font-bold text-neutral-900">Nueva plaga</Text>
-          <Text className="text-center text-neutral-500">
+          <Text className={`text-2xl font-bold ${palette.title}`}>Nueva plaga</Text>
+          <Text className={`text-center ${palette.sub}`}>
             Registra una plaga asociada a un cultivo
           </Text>
         </View>
 
         {crops.length === 0 ? (
           <View className="gap-3">
-            <Text className="text-center text-neutral-500">
+            <Text className={`text-center ${palette.sub}`}>
               Para crear una plaga primero necesitas registrar un cultivo.
             </Text>
             <Button text="Ir a mis cultivos" onPress={() => router.replace('/crops')} />
@@ -104,7 +106,7 @@ export default function NewPestScreen() {
         ) : (
           <>
             {errors.root?.message && (
-              <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
+              <Text className={`rounded-lg p-3 text-center ${palette.errorBanner}`}>
                 {errors.root.message}
               </Text>
             )}

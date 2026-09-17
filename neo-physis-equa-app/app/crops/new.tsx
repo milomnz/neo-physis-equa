@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
 import Select from '../../src/components/Select';
+import { useAccessibility } from '../../src/accessibility/context';
 import { createCrop, GROWTH_STAGES, type GrowthStage } from '../../src/services/crops';
 import { getFarms, type Farm } from '../../src/services/farms';
 import { getSession } from '../../src/services/session';
@@ -19,6 +20,7 @@ interface CropForm {
 
 export default function NewCropScreen() {
   const router = useRouter();
+  const { palette } = useAccessibility();
   const [farms, setFarms] = useState<Farm[]>([]);
   const [loading, setLoading] = useState(true);
   const [serverError, setServerError] = useState('');
@@ -71,28 +73,28 @@ export default function NewCropScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} />
       </View>
     );
   }
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-neutral-50"
+      className={`flex-1 ${palette.bg}`}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View className="flex-1 justify-center gap-5 p-6">
         <View className="items-center gap-1">
-          <Text className="text-2xl font-bold text-neutral-900">Nuevo cultivo</Text>
-          <Text className="text-center text-neutral-500">
+          <Text className={`text-2xl font-bold ${palette.title}`}>Nuevo cultivo</Text>
+          <Text className={`text-center ${palette.sub}`}>
             Registra un cultivo asociado a una de tus fincas
           </Text>
         </View>
 
         {farms.length === 0 ? (
           <View className="gap-3">
-            <Text className="text-center text-neutral-500">
+            <Text className={`text-center ${palette.sub}`}>
               Para crear un cultivo primero necesitas registrar una finca.
             </Text>
             <Button text="Ir a mis fincas" onPress={() => router.replace('/farms')} />
@@ -100,12 +102,12 @@ export default function NewCropScreen() {
         ) : (
           <>
             {errors.root?.message && (
-              <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
+              <Text className={`rounded-lg p-3 text-center ${palette.errorBanner}`}>
                 {errors.root.message}
               </Text>
             )}
             {serverError ? (
-              <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
+              <Text className={`rounded-lg p-3 text-center ${palette.errorBanner}`}>
                 {serverError}
               </Text>
             ) : null}

@@ -1,4 +1,5 @@
 import { TextInput } from 'react-native';
+import { useAccessibility } from '../accessibility/context';
 
 interface SearchBarProps {
   value: string;
@@ -7,6 +8,8 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ value, onChangeText, placeholder }: SearchBarProps) {
+  const { highContrast } = useAccessibility();
+
   return (
     <TextInput
       accessibilityLabel="Buscar"
@@ -14,8 +17,10 @@ export default function SearchBar({ value, onChangeText, placeholder }: SearchBa
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor="#a3a3a3"
-      className="mb-4 rounded-xl border border-neutral-300 bg-white p-3.5"
+      placeholderTextColor={highContrast ? '#fbbf24' : '#a3a3a3'}
+      className={`mb-4 rounded-xl border p-3.5 ${
+        highContrast ? 'border-amber-400 bg-black text-amber-400' : 'border-neutral-300 bg-white'
+      }`}
     />
   );
 }

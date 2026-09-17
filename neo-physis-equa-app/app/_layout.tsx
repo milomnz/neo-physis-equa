@@ -1,9 +1,11 @@
 import { Stack } from 'expo-router';
+import { AccessibilityProvider } from '../src/accessibility/context';
 import '../global.css';
 
 export default function RootLayout() {
   return (
-    <Stack
+    <AccessibilityProvider>
+      <Stack
       screenOptions={{
         headerStyle: { backgroundColor: '#ffffff' },
         headerTintColor: '#171717',
@@ -24,6 +26,7 @@ export default function RootLayout() {
       <Stack.Screen name="pests/index" options={{ title: 'Plagas' }} />
       <Stack.Screen name="pests/new" options={{ title: 'Nueva Plaga' }} />
       <Stack.Screen name="pests/[id]" options={{ title: 'Detalle de la Plaga' }} />
-    </Stack>
+      </Stack>
+    </AccessibilityProvider>
   );
 }

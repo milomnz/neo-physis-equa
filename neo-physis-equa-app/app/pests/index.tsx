@@ -5,6 +5,7 @@ import Badge from '../../src/components/Badge';
 import Button from '../../src/components/Button';
 import ChipFilter from '../../src/components/ChipFilter';
 import SearchBar from '../../src/components/SearchBar';
+import { useAccessibility } from '../../src/accessibility/context';
 import { getCrops, type Crop } from '../../src/services/crops';
 import { getPests, type Pest } from '../../src/services/pests';
 import { getSession } from '../../src/services/session';
@@ -12,6 +13,7 @@ import { getSession } from '../../src/services/session';
 export default function PestsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ cropId?: string }>();
+  const { palette } = useAccessibility();
   const [pests, setPests] = useState<Pest[]>([]);
   const [crops, setCrops] = useState<Crop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,18 +74,18 @@ export default function PestsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-neutral-50 p-6">
+    <View className={`flex-1 ${palette.bg} p-6`}>
       <View className="mb-4 flex-row items-center justify-between">
         <View>
-          <Text className="text-2xl font-bold text-neutral-900">Plagas</Text>
-          <Text className="text-sm text-neutral-500">
+          <Text className={`text-2xl font-bold ${palette.title}`}>Plagas</Text>
+          <Text className={`text-sm ${palette.sub}`}>
             {selectedCropLabel ? `Cultivo: ${selectedCropLabel}` : 'Plagas de tus cultivos'}
           </Text>
         </View>
@@ -91,17 +93,17 @@ export default function PestsScreen() {
       </View>
 
       {error ? (
-        <View className="mb-4 rounded-lg bg-red-50 p-3">
-          <Text className="text-center text-sm font-semibold text-red-700">{error}</Text>
+        <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
+          <Text className="text-center text-sm font-semibold">{error}</Text>
         </View>
       ) : null}
 
       {crops.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
-          <Text className="text-center text-lg font-semibold text-neutral-700">
+          <Text className={`text-center text-lg font-semibold ${palette.body}`}>
             Aún no tienes cultivos registrados
           </Text>
-          <Text className="text-center text-sm text-neutral-500">
+          <Text className={`text-center text-sm ${palette.sub}`}>
             Crea tu primer cultivo para poder registrar plagas.
           </Text>
           <Button text="Ir a mis cultivos" onPress={() => router.push('/crops')} />
@@ -126,7 +128,7 @@ export default function PestsScreen() {
             </>
           }
           ListEmptyComponent={
-            <Text className="py-6 text-center text-sm text-neutral-500">
+            <Text className={`py-6 text-center text-sm ${palette.sub}`}>
               No se encontraron plagas con el criterio de búsqueda.
             </Text>
           }
@@ -136,22 +138,22 @@ export default function PestsScreen() {
               accessibilityHint="Abre el detalle de la plaga para editarla o eliminarla"
               accessibilityRole="button"
               onPress={() => router.push(`/pests/${item.id}`)}
-              className="mb-3 rounded-2xl border border-neutral-200 bg-white p-4"
+              className={`mb-3 rounded-2xl p-4 ${palette.card}`}
             >
               <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-bold text-neutral-900">{item.commonName}</Text>
+                <Text className={`text-lg font-bold ${palette.title}`}>{item.commonName}</Text>
                 <Badge value={item.severity} />
               </View>
               {item.scientificName ? (
-                <Text className="mt-0.5 text-xs italic text-neutral-500">
+                <Text className={`mt-0.5 text-xs italic ${palette.sub}`}>
                   {item.scientificName}
                 </Text>
               ) : null}
-              <Text className="mt-1 text-sm text-neutral-500">
+              <Text className={`mt-1 text-sm ${palette.sub}`}>
                 Cultivo: {item.crop?.species ?? 'No asociado'}
               </Text>
               {item.symptoms.length > 0 ? (
-                <Text className="mt-1 text-xs text-neutral-500" numberOfLines={2}>
+                <Text className={`mt-1 text-xs ${palette.sub}`} numberOfLines={2}>
                   Síntomas: {item.symptoms.join(', ')}
                 </Text>
               ) : null}

@@ -6,13 +6,13 @@ import {
   type Path,
   type RegisterOptions,
 } from 'react-hook-form';
+import { useAccessibility } from '../accessibility/context';
 
 interface FieldProps<T extends FieldValues> extends TextInputProps {
   control: Control<T>;
   name: Path<T>;
   label: string;
   rules?: RegisterOptions<T>;
-  labelClassName?: string;
 }
 
 export default function Field<T extends FieldValues>({
@@ -20,9 +20,10 @@ export default function Field<T extends FieldValues>({
   name,
   label,
   rules,
-  labelClassName,
   ...inputProps
 }: FieldProps<T>) {
+  const { highContrast } = useAccessibility();
+
   return (
     <Controller
       control={control}
@@ -30,18 +31,28 @@ export default function Field<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className={`font-semibold text-neutral-700 ${labelClassName}`}>{label}</Text>
+          <Text className={`font-semibold ${highContrast ? 'text-amber-400' : 'text-neutral-700'}`}>
+            {label}
+          </Text>
           <TextInput
-            className={`rounded-xl border bg-white p-3.5 ${
-              error ? 'border-red-500' : 'border-neutral-300'
+            className={`rounded-xl border p-3.5 ${
+              error
+                ? 'border-red-500'
+                : highContrast
+                  ? 'border-amber-400 bg-black text-amber-400'
+                  : 'border-neutral-300 bg-white'
             }`}
-            placeholderTextColor="#a3a3a3"
+            placeholderTextColor={highContrast ? '#fbbf24' : '#a3a3a3'}
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
             {...inputProps}
           />
-          {error?.message && <Text className="text-xs text-red-600">{error.message}</Text>}
+          {error?.message && (
+            <Text className={`text-xs ${highContrast ? 'text-red-400' : 'text-red-600'}`}>
+              {error.message}
+            </Text>
+          )}
         </View>
       )}
     />

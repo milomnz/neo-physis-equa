@@ -3,6 +3,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Badge from '../src/components/Badge';
 import Button from '../src/components/Button';
+import { useAccessibility } from '../src/accessibility/context';
 import { clearSession, getSession, type Session } from '../src/services/session';
 
 const DISABILITY_LABELS: Record<string, string> = {
@@ -14,6 +15,7 @@ const DISABILITY_LABELS: Record<string, string> = {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { palette } = useAccessibility();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,8 +33,8 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} />
       </View>
     );
   }
@@ -50,29 +52,25 @@ export default function HomeScreen() {
       : null;
 
   return (
-    <View className="flex-1 bg-neutral-50 p-6">
+    <View className={`flex-1 p-6 ${palette.bg}`}>
       <View className="items-center gap-2 pt-8">
         <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-600">
           <Text className="text-2xl font-bold text-white">N</Text>
         </View>
-        <Text className="text-2xl font-bold text-neutral-900">Hola, {session.nombre}</Text>
-        <Text className="text-center text-neutral-500">
-          Has iniciado sesión correctamente
-        </Text>
+        <Text className={`text-2xl font-bold ${palette.title}`}>Hola, {session.nombre}</Text>
+        <Text className={`text-center ${palette.sub}`}>Has iniciado sesión correctamente</Text>
       </View>
 
-      <View className="mt-8 rounded-2xl border border-neutral-200 bg-white p-5">
-        <Text className="mb-3 text-lg font-bold text-neutral-900">
-          Mi perfil de accesibilidad
-        </Text>
-        <Text className="mb-2 text-sm text-neutral-500">
+      <View className={`mt-8 rounded-2xl p-5 ${palette.card}`}>
+        <Text className={`mb-3 text-lg font-bold ${palette.title}`}>Mi perfil de accesibilidad</Text>
+        <Text className={`mb-2 text-sm ${palette.sub}`}>
           Adaptaciones activas para tu experiencia
         </Text>
         <View className="flex-row flex-wrap gap-2">
           {disability ? (
             <Badge value={disability} />
           ) : (
-            <Text className="rounded-full bg-neutral-100 px-2.5 py-1 text-[10px] font-bold text-neutral-600">
+            <Text className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${palette.chipBg}`}>
               Discapacidad: ninguna
             </Text>
           )}
@@ -80,10 +78,10 @@ export default function HomeScreen() {
           <Badge value={highContrast ? 'activo' : 'inactivo'} />
         </View>
         <View className="mt-3 gap-1">
-          <Text className="text-xs text-neutral-600">
+          <Text className={`text-xs ${palette.sub}`}>
             Lectura por voz (TTS): {ttsEnabled ? 'Activada' : 'Desactivada'}
           </Text>
-          <Text className="text-xs text-neutral-600">
+          <Text className={`text-xs ${palette.sub}`}>
             Alto contraste: {highContrast ? 'Activado' : 'Desactivado'}
           </Text>
         </View>

@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
 import Select from '../../src/components/Select';
+import { useAccessibility } from '../../src/accessibility/context';
 import { deleteCrop, getCrop, GROWTH_STAGES, updateCrop, type GrowthStage } from '../../src/services/crops';
 import { getSession } from '../../src/services/session';
 
@@ -26,6 +27,7 @@ interface CropForm {
 export default function CropDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { palette, highContrast } = useAccessibility();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [screenError, setScreenError] = useState('');
@@ -116,45 +118,45 @@ export default function CropDetailScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} />
       </View>
     );
   }
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-neutral-50"
+      className={`flex-1 ${palette.bg}`}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView className="flex-1 p-6" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className="text-2xl font-bold text-neutral-900">Cultivo</Text>
-        <Text className="mb-5 text-sm text-neutral-500">
+        <Text className={`text-2xl font-bold ${palette.title}`}>Cultivo</Text>
+        <Text className={`mb-5 text-sm ${palette.sub}`}>
           Edita los datos del cultivo o gestiona sus plagas
         </Text>
 
         {saved ? (
-          <View className="mb-4 rounded-lg bg-green-50 p-3">
-            <Text className="text-center text-sm font-semibold text-green-700">
+          <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
+            <Text className="text-center text-sm font-semibold">
               Cambios guardados correctamente
             </Text>
           </View>
         ) : null}
         {screenError ? (
-          <View className="mb-4 rounded-lg bg-red-50 p-3">
-            <Text className="text-center text-sm font-semibold text-red-700">{screenError}</Text>
+          <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
+            <Text className="text-center text-sm font-semibold">{screenError}</Text>
           </View>
         ) : null}
         {errors.root?.message && (
-          <View className="mb-4 rounded-lg bg-red-50 p-3">
-            <Text className="text-center text-sm font-semibold text-red-700">
+          <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
+            <Text className="text-center text-sm font-semibold">
               {errors.root.message}
             </Text>
           </View>
         )}
 
-        <View className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5">
-          <Text className="mb-4 text-lg font-bold text-neutral-900">Editar datos</Text>
+        <View className={`mb-6 rounded-2xl p-5 ${palette.card}`}>
+          <Text className={`mb-4 text-lg font-bold ${palette.title}`}>Editar datos</Text>
 
           <Field
             control={control}
@@ -211,15 +213,20 @@ export default function CropDetailScreen() {
           />
         </View>
 
-        <View className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5">
-          <Text className="mb-1 text-lg font-bold text-neutral-900">Plagas de este cultivo</Text>
-          <Text className="mb-4 text-sm text-neutral-500">
+        <View className={`mb-6 rounded-2xl p-5 ${palette.card}`}>
+          <Text className={`mb-1 text-lg font-bold ${palette.title}`}>Plagas de este cultivo</Text>
+          <Text className={`mb-4 text-sm ${palette.sub}`}>
             Registra y gestiona las plagas que afectan este cultivo.
           </Text>
           <Button text="Ver / registrar plagas →" onPress={() => router.push(`/pests?cropId=${id}`)} />
         </View>
 
-        <Button text="Eliminar cultivo" secondary onPress={handleDelete} className="border-red-500" />
+        <Button
+          text="Eliminar cultivo"
+          secondary
+          onPress={handleDelete}
+          className={highContrast ? undefined : 'border-red-500'}
+        />
       </ScrollView>
     </KeyboardAvoidingView>
   );

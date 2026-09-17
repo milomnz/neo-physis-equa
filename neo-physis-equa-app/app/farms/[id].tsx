@@ -4,8 +4,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
+import { useAccessibility } from '../../src/accessibility/context';
 import { deleteFarm, getFarm, updateFarm, type Farm } from '../../src/services/farms';
-import { getSession, type Session } from '../../src/services/session';
+import { getSession } from '../../src/services/session';
 
 interface FarmForm {
   name: string;
@@ -17,7 +18,7 @@ interface FarmForm {
 export default function FarmDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
+  const { palette } = useAccessibility();
   const [farm, setFarm] = useState<Farm | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -37,7 +38,6 @@ export default function FarmDetailScreen() {
       if (!id) return;
       try {
         const userSession = await getSession();
-        setSession(userSession);
         if (!userSession?.token) {
           router.replace('/login');
           return;
@@ -126,72 +126,62 @@ export default function FarmDetailScreen() {
     );
   };
 
-  const isHighContrast = session?.accessibilityProfile?.highContrast === true;
-
-  const containerBg = isHighContrast ? 'bg-black' : 'bg-neutral-50';
-  const cardBg = isHighContrast ? 'bg-zinc-900 border-2 border-amber-400' : 'bg-white border border-neutral-200';
-  const textColor = isHighContrast ? 'text-amber-400' : 'text-neutral-900';
-  const subTextColor = isHighContrast ? 'text-zinc-300' : 'text-neutral-500';
-  const inputClassName = isHighContrast
-    ? 'rounded-xl border border-amber-400 bg-black text-amber-400 p-3.5'
-    : undefined;
-  const labelClassName = isHighContrast ? 'text-amber-400' : undefined;
-  const errorBanner = isHighContrast ? 'bg-red-950 text-red-400' : 'bg-red-50 text-red-700';
-
   if (loading) {
     return (
-      <View className={`flex-1 items-center justify-center ${containerBg}`}>
-        <ActivityIndicator color={isHighContrast ? '#fbbf24' : '#2563eb'} size="large" />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} size="large" />
       </View>
     );
   }
 
   if (!farm) {
     return (
-      <View className={`flex-1 items-center justify-center gap-4 p-6 ${containerBg}`}>
-        <Text className={`text-lg font-semibold ${textColor}`}>No se pudo cargar la finca</Text>
-        {screenError ? <Text className={`rounded-lg p-3 text-center text-sm ${errorBanner}`}>{screenError}</Text> : null}
-        <Button text="Volver a mis fincas" onPress={() => router.replace('/farms')} variant={isHighContrast ? 'amber' : undefined} />
+      <View className={`flex-1 items-center justify-center gap-4 p-6 ${palette.bg}`}>
+        <Text className={`text-lg font-semibold ${palette.title}`}>No se pudo cargar la finca</Text>
+        {screenError ? (
+          <Text className={`rounded-lg p-3 text-center text-sm ${palette.errorBanner}`}>
+            {screenError}
+          </Text>
+        ) : null}
+        <Button text="Volver a mis fincas" onPress={() => router.replace('/farms')} />
       </View>
     );
   }
 
   return (
     <ScrollView
-      className={`flex-1 ${containerBg}`}
+      className={`flex-1 ${palette.bg}`}
       contentContainerStyle={{ padding: 24, paddingBottom: 40 }}
     >
-      <Text className={`text-2xl font-bold ${textColor}`}>Mi finca</Text>
-      <Text className={`mb-5 text-sm ${subTextColor}`}>Gestiona los datos de tu terreno agrícola</Text>
+      <Text className={`text-2xl font-bold ${palette.title}`}>Mi finca</Text>
+      <Text className={`mb-5 text-sm ${palette.sub}`}>Gestiona los datos de tu terreno agrícola</Text>
 
       {saved ? (
-        <View className="mb-4 rounded-lg bg-green-50 p-3">
-          <Text className="text-center text-sm font-semibold text-green-700">
+        <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
+          <Text className="text-center text-sm font-semibold">
             Cambios guardados correctamente
           </Text>
         </View>
       ) : null}
       {screenError ? (
-        <View className={`mb-4 rounded-lg p-3 ${errorBanner}`}>
+        <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
           <Text className="text-center text-sm font-semibold">{screenError}</Text>
         </View>
       ) : null}
       {errors.root?.message ? (
-        <View className={`mb-4 rounded-lg p-3 ${errorBanner}`}>
+        <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
           <Text className="text-center text-sm font-semibold">{errors.root.message}</Text>
         </View>
       ) : null}
 
-      <View className={`mb-6 gap-5 rounded-2xl p-4 ${cardBg}`}>
-        <Text className={`text-xl font-bold ${textColor}`}>Editar datos</Text>
+      <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
+        <Text className={`text-xl font-bold ${palette.title}`}>Editar datos</Text>
 
         <Field
           control={control}
           name="name"
           label="Nombre de la finca *"
           autoCapitalize="words"
-          className={inputClassName}
-          labelClassName={labelClassName}
           rules={{
             required: 'El nombre de la finca es obligatorio',
             maxLength: { value: 100, message: 'El nombre debe tener máximo 100 caracteres' },
@@ -202,8 +192,6 @@ export default function FarmDetailScreen() {
           name="vereda"
           label="Vereda"
           autoCapitalize="words"
-          className={inputClassName}
-          labelClassName={labelClassName}
           rules={{ maxLength: { value: 100, message: 'La vereda debe tener máximo 100 caracteres' } }}
         />
         <Field
@@ -211,8 +199,6 @@ export default function FarmDetailScreen() {
           name="municipio"
           label="Municipio"
           autoCapitalize="words"
-          className={inputClassName}
-          labelClassName={labelClassName}
           rules={{ maxLength: { value: 100, message: 'El municipio debe tener máximo 100 caracteres' } }}
         />
         <Field
@@ -220,8 +206,6 @@ export default function FarmDetailScreen() {
           name="altitude"
           label="Altitud (m.s.n.m.) *"
           keyboardType="numeric"
-          className={inputClassName}
-          labelClassName={labelClassName}
           rules={{
             required: 'La altitud es obligatoria',
             validate: (value) =>
@@ -234,20 +218,18 @@ export default function FarmDetailScreen() {
           text={saving ? 'Guardando…' : 'Guardar cambios'}
           onPress={handleSubmit(onSubmit)}
           disabled={saving}
-          variant={isHighContrast ? 'amber' : undefined}
           accessibilityHint="Guarda los cambios de los datos de la finca"
         />
       </View>
 
-      <View className={`mb-6 gap-2 rounded-2xl p-4 ${cardBg}`}>
-        <Text className={`text-xl font-bold ${textColor}`}>Cultivos de esta finca</Text>
-        <Text className={`text-sm ${subTextColor}`}>
+      <View className={`mb-6 gap-2 rounded-2xl p-4 ${palette.card}`}>
+        <Text className={`text-xl font-bold ${palette.title}`}>Cultivos de esta finca</Text>
+        <Text className={`text-sm ${palette.sub}`}>
           Desde aquí puedes registrar y gestionar los cultivos sembrados en {farm.name}.
         </Text>
         <Button
           text="Ver y registrar cultivos →"
           onPress={() => router.push(`/crops?farmId=${farm.id}`)}
-          variant={isHighContrast ? 'amber' : undefined}
           accessibilityHint="Abre la gestión de cultivos de esta finca"
         />
       </View>
@@ -256,8 +238,6 @@ export default function FarmDetailScreen() {
         text="Eliminar finca"
         onPress={handleDelete}
         secondary
-        variant={isHighContrast ? 'amberOutline' : undefined}
-        className={isHighContrast ? undefined : 'border-red-500'}
         accessibilityHint="Elimina la finca y todos sus datos asociados"
       />
     </ScrollView>

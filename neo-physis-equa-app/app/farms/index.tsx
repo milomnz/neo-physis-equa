@@ -5,8 +5,9 @@ import { useRouter } from 'expo-router';
 import Button from '../../src/components/Button';
 import Field from '../../src/components/Field';
 import SearchBar from '../../src/components/SearchBar';
+import { useAccessibility } from '../../src/accessibility/context';
 import { createFarm, getFarms, type Farm } from '../../src/services/farms';
-import { getSession, type Session } from '../../src/services/session';
+import { getSession } from '../../src/services/session';
 
 interface FarmForm {
   name: string;
@@ -17,7 +18,7 @@ interface FarmForm {
 
 export default function FarmsScreen() {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
+  const { palette } = useAccessibility();
   const [farms, setFarms] = useState<Farm[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -37,7 +38,6 @@ export default function FarmsScreen() {
     try {
       setLoading(true);
       const userSession = await getSession();
-      setSession(userSession);
 
       if (!userSession?.token) {
         router.replace('/login');
@@ -86,19 +86,6 @@ export default function FarmsScreen() {
     }
   };
 
-  const isHighContrast = session?.accessibilityProfile?.highContrast === true;
-
-  const containerBg = isHighContrast ? 'bg-black' : 'bg-neutral-50';
-  const cardBg = isHighContrast ? 'bg-zinc-900 border-2 border-amber-400' : 'bg-white border border-neutral-200';
-  const textColor = isHighContrast ? 'text-amber-400' : 'text-neutral-900';
-  const subTextColor = isHighContrast ? 'text-zinc-300' : 'text-neutral-500';
-  const chipBg = isHighContrast ? 'bg-zinc-800 text-amber-400' : 'bg-neutral-100 text-neutral-600';
-  const inputClassName = isHighContrast
-    ? 'rounded-xl border border-amber-400 bg-black text-amber-400 p-3.5'
-    : undefined;
-  const labelClassName = isHighContrast ? 'text-amber-400' : undefined;
-  const errorBanner = isHighContrast ? 'bg-red-950 text-red-400' : 'bg-red-50 text-red-700';
-
   const filteredFarms = search.trim()
     ? farms.filter((farm) => {
         const location = [farm.location?.vereda, farm.location?.municipio, farm.location?.departamento]
@@ -114,17 +101,17 @@ export default function FarmsScreen() {
 
   if (loading) {
     return (
-      <View className={`flex-1 items-center justify-center ${containerBg}`}>
-        <ActivityIndicator color={isHighContrast ? '#fbbf24' : '#2563eb'} size="large" />
+      <View className={`flex-1 items-center justify-center ${palette.bg}`}>
+        <ActivityIndicator color={palette.spinner} size="large" />
       </View>
     );
   }
 
   return (
-    <View className={`flex-1 ${containerBg} p-6`}>
+    <View className={`flex-1 ${palette.bg} p-6`}>
       <View className="mb-5 gap-1">
-        <Text className={`text-2xl font-bold ${textColor}`}>Mis Fincas</Text>
-        <Text className={`text-sm ${subTextColor}`}>
+        <Text className={`text-2xl font-bold ${palette.title}`}>Mis Fincas</Text>
+        <Text className={`text-sm ${palette.sub}`}>
           Terrenos agrícolas para el diagnóstico de plagas
         </Text>
       </View>
@@ -133,7 +120,6 @@ export default function FarmsScreen() {
         <Button
           text={showForm ? 'Cancelar' : '+ Nueva finca'}
           onPress={() => setShowForm((v) => !v)}
-          variant={isHighContrast ? 'amber' : undefined}
           accessibilityLabel={showForm ? 'Cerrar formulario de registro' : 'Registrar nueva finca'}
           accessibilityHint="Muestra u oculta el formulario para inscribir un nuevo terreno agrícola"
           className="flex-1"
@@ -141,19 +127,19 @@ export default function FarmsScreen() {
       </View>
 
       {success ? (
-        <View className="mb-4 rounded-lg bg-green-50 p-3">
-          <Text className="text-center text-sm font-semibold text-green-700">{success}</Text>
+        <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
+          <Text className="text-center text-sm font-semibold">{success}</Text>
         </View>
       ) : null}
       {errors.root?.message ? (
-        <View className={`mb-4 rounded-lg p-3 ${errorBanner}`}>
+        <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
           <Text className="text-center text-sm font-semibold">{errors.root.message}</Text>
         </View>
       ) : null}
 
       {showForm && (
-        <View className={`mb-6 gap-5 rounded-2xl p-4 ${cardBg}`}>
-          <Text className={`text-xl font-bold ${textColor}`}>Registrar finca</Text>
+        <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
+          <Text className={`text-xl font-bold ${palette.title}`}>Registrar finca</Text>
 
           <Field
             control={control}
@@ -161,8 +147,6 @@ export default function FarmsScreen() {
             label="Nombre de la finca *"
             autoCapitalize="words"
             placeholder="ej. Finca El Paraíso"
-            className={inputClassName}
-            labelClassName={labelClassName}
             rules={{
               required: 'El nombre de la finca es obligatorio',
               maxLength: { value: 100, message: 'El nombre debe tener máximo 100 caracteres' },
@@ -174,8 +158,6 @@ export default function FarmsScreen() {
             label="Vereda"
             autoCapitalize="words"
             placeholder="ej. La Esmeralda"
-            className={inputClassName}
-            labelClassName={labelClassName}
             rules={{ maxLength: { value: 100, message: 'La vereda debe tener máximo 100 caracteres' } }}
           />
           <Field
@@ -184,8 +166,6 @@ export default function FarmsScreen() {
             label="Municipio"
             autoCapitalize="words"
             placeholder="ej. Armero"
-            className={inputClassName}
-            labelClassName={labelClassName}
             rules={{ maxLength: { value: 100, message: 'El municipio debe tener máximo 100 caracteres' } }}
           />
           <Field
@@ -194,8 +174,6 @@ export default function FarmsScreen() {
             label="Altitud (m.s.n.m.) *"
             keyboardType="numeric"
             placeholder="ej. 1650"
-            className={inputClassName}
-            labelClassName={labelClassName}
             rules={{
               required: 'La altitud es obligatoria',
               validate: (value) =>
@@ -208,18 +186,17 @@ export default function FarmsScreen() {
             text={submitting ? 'Registrando…' : 'Registrar finca'}
             onPress={handleSubmit(onSubmit)}
             disabled={submitting}
-            variant={isHighContrast ? 'amber' : undefined}
           />
         </View>
       )}
 
       {farms.length === 0 ? (
-        <View className={`flex-1 items-center justify-center gap-3 rounded-2xl p-6 ${cardBg}`}>
-          <Text className={`text-lg font-semibold ${textColor}`}>No tienes fincas registradas</Text>
-          <Text className={`text-center text-sm ${subTextColor}`}>
+        <View className={`flex-1 items-center justify-center gap-3 rounded-2xl p-6 ${palette.card}`}>
+          <Text className={`text-lg font-semibold ${palette.title}`}>No tienes fincas registradas</Text>
+          <Text className={`text-center text-sm ${palette.sub}`}>
             Registra tu primera finca para vincularla al diagnóstico de plagas.
           </Text>
-          <Button text="+ Registrar finca" onPress={() => setShowForm(true)} variant={isHighContrast ? 'amber' : undefined} />
+          <Button text="+ Registrar finca" onPress={() => setShowForm(true)} />
         </View>
       ) : (
         <FlatList
@@ -236,23 +213,23 @@ export default function FarmsScreen() {
             ) : null
           }
           ListEmptyComponent={
-            <Text className={`p-6 text-center text-sm ${subTextColor}`}>
+            <Text className={`p-6 text-center text-sm ${palette.sub}`}>
               No se encontraron fincas con el criterio de búsqueda.
             </Text>
           }
           renderItem={({ item }) => (
             <View
               accessibilityLabel={`Finca ${item.name}, altitud ${item.altitude} metros sobre el nivel del mar`}
-              className={`gap-3 rounded-2xl p-4 ${cardBg}`}
+              className={`gap-3 rounded-2xl p-4 ${palette.card}`}
             >
               <View className="flex-row items-center justify-between gap-2">
-                <Text className={`flex-1 text-lg font-semibold ${textColor}`}>{item.name}</Text>
-                <Text className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${chipBg}`}>
+                <Text className={`flex-1 text-lg font-semibold ${palette.title}`}>{item.name}</Text>
+                <Text className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${palette.chipBg}`}>
                   {item.altitude} m s. n. m.
                 </Text>
               </View>
 
-              <Text className={`text-sm ${subTextColor}`}>
+              <Text className={`text-sm ${palette.sub}`}>
                 {[item.location?.vereda, item.location?.municipio]
                   .filter(Boolean)
                   .join(', ') || 'Ubicación no especificada'}
@@ -261,7 +238,6 @@ export default function FarmsScreen() {
               <Button
                 text="Diagnosticar plagas"
                 onPress={() => Alert.alert('Escáner', `Preparando la cámara para analizar plagas en ${item.name}…`)}
-                variant={isHighContrast ? 'amber' : undefined}
                 accessibilityLabel={`Iniciar escáner de cámara para la finca ${item.name}`}
                 accessibilityHint="Abre el escáner de cámara para analizar plagas en este terreno"
               />
@@ -269,7 +245,6 @@ export default function FarmsScreen() {
                 text="Ver y gestionar →"
                 onPress={() => router.push(`/farms/${item.id}`)}
                 secondary
-                variant={isHighContrast ? 'amberOutline' : undefined}
                 accessibilityLabel={`Ver y gestionar la finca ${item.name}`}
                 accessibilityHint="Abre el detalle de la finca para editarla, eliminarla o ver sus cultivos"
               />

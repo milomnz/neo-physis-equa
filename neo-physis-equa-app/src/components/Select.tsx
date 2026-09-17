@@ -6,6 +6,7 @@ import {
   type Path,
   type RegisterOptions,
 } from 'react-hook-form';
+import { useAccessibility } from '../accessibility/context';
 
 export interface SelectOption {
   value: string | number;
@@ -29,6 +30,8 @@ export default function Select<T extends FieldValues>({
   empty,
   rules,
 }: SelectProps<T>) {
+  const { highContrast } = useAccessibility();
+
   return (
     <Controller
       control={control}
@@ -36,9 +39,13 @@ export default function Select<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className="font-semibold text-neutral-700">{label}</Text>
+          <Text className={`font-semibold ${highContrast ? 'text-amber-400' : 'text-neutral-700'}`}>
+            {label}
+          </Text>
           {options.length === 0 ? (
-            <Text className="text-neutral-500">{empty ?? 'Sin opciones disponibles'}</Text>
+            <Text className={highContrast ? 'text-zinc-300' : 'text-neutral-500'}>
+              {empty ?? 'Sin opciones disponibles'}
+            </Text>
           ) : (
             <View className="flex-row flex-wrap gap-2">
               {options.map((option) => {
@@ -48,12 +55,24 @@ export default function Select<T extends FieldValues>({
                     key={String(option.value)}
                     onPress={() => onChange(option.value)}
                     className={`rounded-full border px-4 py-2 active:opacity-70 ${
-                      active ? 'border-blue-600 bg-blue-600' : 'border-neutral-300 bg-white'
+                      active
+                        ? highContrast
+                          ? 'border-amber-400 bg-amber-400'
+                          : 'border-blue-600 bg-blue-600'
+                        : highContrast
+                          ? 'border-amber-400 bg-black'
+                          : 'border-neutral-300 bg-white'
                     }`}
                   >
                     <Text
                       className={`text-xs font-semibold ${
-                        active ? 'text-white' : 'text-neutral-600'
+                        active
+                          ? highContrast
+                            ? 'text-black'
+                            : 'text-white'
+                          : highContrast
+                            ? 'text-amber-400'
+                            : 'text-neutral-600'
                       }`}
                     >
                       {option.label}
@@ -63,7 +82,11 @@ export default function Select<T extends FieldValues>({
               })}
             </View>
           )}
-          {error?.message && <Text className="text-xs text-red-600">{error.message}</Text>}
+          {error?.message && (
+            <Text className={`text-xs ${highContrast ? 'text-red-400' : 'text-red-600'}`}>
+              {error.message}
+            </Text>
+          )}
         </View>
       )}
     />
