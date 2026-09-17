@@ -6,8 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Crop } from '../../crops/entities/crop.entity';
 
 export interface LocationDetails {
   vereda?: string;
@@ -48,4 +50,7 @@ export class Farm {
 
   @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Crop, (crop) => crop.farm)
+  crops: Crop[];
 }
