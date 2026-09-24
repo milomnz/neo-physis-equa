@@ -1,4 +1,4 @@
-# Diccionario de Estilos (AgroIncluye)
+# Diccionario de Estilos (AgroPhysis)
 
 Este documento define las bases visuales del proyecto, priorizando la legibilidad y el alto contraste para cumplir con los requerimientos de accesibilidad de la aplicación.
 
@@ -55,8 +55,3 @@ Todo elemento interactivo debe tener una altura mínima de **48px**. Esta métri
 *   Borde inactivo: `2px` sólido, color Azul Turquesa Oscuro (`border-turquesa/50`).
 *   Borde activo (Focus): `2px` sólido, color Azul Noche Profundo (`border-noche`).
 *   Etiqueta (Label): Siempre visible fuera del input, fuente Inter, 14px, color Azul Noche Profundo (`text-noche`).
-
-### 4. Uso Restringido del Verde Turquesa (#6B979A)
-Dado que su contraste contra fondos claros (Beige/Blanco) es de aproximadamente 2.6:1 y no cumple con el estándar WCAG AA (mínimo 3:1 para componentes y 4.5:1 para texto), el color `verde` se utilizará **exclusivamente** para:
-*   Elementos puramente decorativos o ilustraciones.
-*   Estados inactivos/deshabilitados (disabled), los cuales están exentos de los requisitos de contraste por la normativa WCAG.
