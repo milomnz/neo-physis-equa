@@ -6,6 +6,7 @@ interface ButtonProps {
   onPress: () => void;
   disabled?: boolean;
   secondary?: boolean;
+  danger?: boolean;
   className?: string;
   accessibilityLabel?: string;
   accessibilityHint?: string;
@@ -16,27 +17,34 @@ export default function Button({
   onPress,
   disabled,
   secondary,
+  danger,
   className = '',
   accessibilityLabel,
   accessibilityHint,
 }: ButtonProps) {
   const { highContrast } = useAccessibility();
 
-  const containerClass = secondary
-    ? highContrast
-      ? 'border border-amber-400'
-      : 'border border-neutral-300'
-    : highContrast
-      ? 'bg-amber-400'
-      : 'bg-blue-600';
+  const containerClass = danger
+    ? 'border-2 border-red-500'
+    : secondary
+      ? highContrast
+        ? 'border-2 border-crema'
+        : 'border-2 border-turquesa'
+      : highContrast
+        ? 'bg-crema border-2 border-crema'
+        : 'bg-turquesa';
 
-  const textClass = secondary
+  const textClass = danger
     ? highContrast
-      ? 'text-amber-400'
-      : 'text-neutral-700'
-    : highContrast
-      ? 'text-black'
-      : 'text-white';
+      ? 'text-red-300'
+      : 'text-red-600'
+    : secondary
+      ? highContrast
+        ? 'text-crema'
+        : 'text-noche'
+      : highContrast
+        ? 'text-noche'
+        : 'text-crema';
 
   return (
     <Pressable
@@ -45,9 +53,9 @@ export default function Button({
       accessibilityLabel={accessibilityLabel ?? text}
       accessibilityHint={accessibilityHint}
       accessibilityRole="button"
-      className={`items-center rounded-xl p-4 active:opacity-80 disabled:opacity-50 ${containerClass} ${className}`}
+      className={`items-center justify-center rounded-xl min-h-[48px] p-4 active:opacity-80 disabled:opacity-50 ${containerClass} ${className}`}
     >
-      <Text className={`font-semibold ${textClass}`}>{text}</Text>
+      <Text className={`font-bricolage ${textClass}`}>{text}</Text>
     </Pressable>
   );
 }

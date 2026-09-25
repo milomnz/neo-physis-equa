@@ -12,8 +12,8 @@ export default function Index() {
 
   if (hasToken === null) {
     return (
-      <View className="flex-1 items-center justify-center bg-neutral-50">
-        <ActivityIndicator />
+      <View className="flex-1 items-center justify-center bg-crema">
+        <ActivityIndicator size="large" color="#17536D" />
       </View>
     );
   }

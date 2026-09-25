@@ -27,7 +27,7 @@ interface PestForm {
 export default function PestDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { palette, highContrast } = useAccessibility();
+  const { palette } = useAccessibility();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [screenError, setScreenError] = useState('');
@@ -132,31 +132,31 @@ export default function PestDetailScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView className="flex-1 p-6" contentContainerStyle={{ paddingBottom: 40 }}>
-        <Text className={`text-2xl font-bold ${palette.title}`}>Plaga</Text>
+        <Text className={`text-2xl font-bricolage ${palette.title}`}>Plaga</Text>
         <Text className={`mb-5 text-sm ${palette.sub}`}>Edita los datos del registro de plaga</Text>
 
         {saved ? (
           <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
-            <Text className="text-center text-sm font-semibold">
+            <Text className="text-center text-sm font-inter-semibold">
               Cambios guardados correctamente
             </Text>
           </View>
         ) : null}
         {screenError ? (
           <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-            <Text className="text-center text-sm font-semibold">{screenError}</Text>
+            <Text className="text-center text-sm font-inter-semibold">{screenError}</Text>
           </View>
         ) : null}
         {errors.root?.message && (
           <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-            <Text className="text-center text-sm font-semibold">
+            <Text className="text-center text-sm font-inter-semibold">
               {errors.root.message}
             </Text>
           </View>
         )}
 
         <View className={`mb-6 rounded-2xl p-5 ${palette.card}`}>
-          <Text className={`mb-4 text-lg font-bold ${palette.title}`}>Editar datos</Text>
+          <Text className={`mb-4 text-lg font-bricolage ${palette.title}`}>Editar datos</Text>
 
           <Field
             control={control}
@@ -218,9 +218,8 @@ export default function PestDetailScreen() {
 
         <Button
           text="Eliminar plaga"
-          secondary
+          danger
           onPress={handleDelete}
-          className={highContrast ? undefined : 'border-red-500'}
         />
       </ScrollView>
     </KeyboardAvoidingView>

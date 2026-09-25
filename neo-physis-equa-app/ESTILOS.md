@@ -5,25 +5,74 @@ variante nueva.** Si algo se repite tres veces, se vuelve componente en
 `src/components/`.
 
 Regla base: primero busca el componente (`Button`, `Field`, `Select`,
-`Badge`). Solo si no existe, usa las clases sueltas de este documento.
+`SearchBar`, `ChipFilter`, `Badge`). Solo si no existe, usa las clases sueltas
+de este documento.
+
+Fuente de verdad visual: `dist_styles.md`.
 
 ---
 
-## Paleta
+## Paleta (Light)
+
+Tokens definidos en `tailwind.config.js`.
 
 | Papel | Clase | Nota |
 |---|---|---|
-| Fondo de pantalla | `bg-neutral-50` | Todas las pantallas |
-| Superficie (tarjeta, barra) | `bg-white` | |
-| Primario / acción | `bg-blue-600`, `text-blue-600` | |
-| Borde | `border-neutral-300` (campos), `border-neutral-200` (separadores) | |
-| Texto fuerte | `text-neutral-900` | Títulos y contenido |
-| Texto secundario | `text-neutral-500` | Descripciones |
-| Texto tenue / metadatos | `text-neutral-400` | Fechas, ids |
-| Error | `text-red-600`, `bg-red-50`, `border-red-500` | |
+| Fondo de pantalla | `bg-crema` | Todas las pantallas |
+| Superficie (tarjeta, barra) | `bg-white` o `bg-crema` | |
+| Primario / acción | `bg-turquesa`, `text-crema` | CTA, header, chips activos |
+| Borde interactivo | `border-turquesa` (2px), inactivo `border-turquesa/50` | |
+| Texto fuerte | `text-noche` | Títulos y contenido |
+| Texto secundario | `text-turquesa` | Subtítulos |
+| Texto tenue / metadatos | `text-turquesa/70` | Fechas, ids |
+| Placeholder | `<placeholderTextColor="#6B979A">` | Prop, no clase |
+| Error | `text-red-600`, `bg-red-50`, `border-red-500` | Texto con `bg-red-700` en banner |
+| Éxito | `bg-green-50 text-green-700` | Banner |
 
-`placeholderTextColor="#a3a3a3"` va como **prop**, no como clase: NativeWind
-no traduce `placeholder:` en React Native.
+`accent` (#6B979A, token `accent`) es decorativo: placeholders y tracks de
+switch inactivos. No se usa para texto informativo ni bordes (falla AA).
+
+## Paleta (Alto Contraste / variante oscura)
+
+Se lee de `useAccessibility()` → `palette`; **no hardcodees clases HC**.
+Resumen de las variantes HC:
+
+| Papel | Variante HC |
+|---|---|
+| Fondo de pantalla | `bg-noche` |
+| Tarjeta | `bg-turquesa` + `border-2 border-crema` |
+| Texto fuerte | `text-crema` |
+| Texto secundario | `text-crema/80`, tenue `text-crema/60` |
+| Chip activo / primario | `bg-crema` + `text-noche` |
+| Error / éxito | `bg-red-950 text-red-300` / `bg-green-950 text-green-300` |
+| Spinner / ActivityIndicator | `palette.spinner` (`#F3F4F4`) |
+
+En modo claro el color de carga es `activityIndicatorColor="#17536D"` y en HC
+`#F3F4F4`.
+
+---
+
+## Tipografía
+
+- **Bricolage Grotesque** (`font-bricolage`): títulos de pantalla y sección,
+  CTA y marca. Solo hay Bold (700) cargada.
+- **Inter** (`font-inter`, `font-inter-semibold`, `font-inter-bold`): cuerpo,
+  labels, chips y banners. Cargadas 400/600/700.
+- No uses `font-bold`/`font-semibold` sueltos si quieres la familia correcta:
+  usá siempre el token de peso (`font-inter-semibold`, etc.).
+
+```tsx
+<Text className="text-2xl font-bricolage text-noche">Título de pantalla</Text>
+<Text className="text-lg font-bricolage text-noche">Título de tarjeta</Text>
+<Text className="font-inter-semibold text-noche">Título de elemento</Text>
+<Text className="text-turquesa">Subtítulo</Text>
+<Text className="text-xs text-turquesa/70">Fecha, id</Text>
+<Text className="font-inter-semibold text-noche">Label de campo</Text>
+```
+
+Todos usan `palette.<clave>` en vez de `text-noche` cuando la pantalla está
+dentro de la sesión (ve `src/accessibility/context.tsx` para las claves de
+`palette`). Las pantallas pre-login (`login`, `register`) usan tokens fijos.
 
 ---
 
@@ -31,92 +80,79 @@ no traduce `placeholder:` en React Native.
 
 ```tsx
 // Pantalla simple
-<View className="flex-1 gap-6 bg-neutral-50 p-6">
+<View className="flex-1 gap-6 p-6 ${palette.bg}">
 
-// Pantalla centrada (login, acuse de recibo, error)
-<View className="flex-1 justify-center gap-5 bg-neutral-50 p-6">
+// Pantalla centrada (login, error)
+<View className="flex-1 justify-center gap-5 p-6 ${palette.bg}">
 
 // Pantalla con scroll (formularios largos)
 <ScrollView
-  className="flex-1 bg-neutral-50"
+  className="flex-1 ${palette.bg}"
   contentContainerClassName="gap-5 p-6"
   keyboardShouldPersistTaps="handled">
 
 // Tarjeta
-<View className="gap-2 rounded-2xl bg-white p-4">
-
-// Barra superior fija (filtros)
-<View className="gap-3 border-b border-neutral-200 bg-white p-4">
-
-// Barra inferior fija (acción principal)
-<View className="border-t border-neutral-200 bg-white p-4">
+<View className="gap-2 rounded-2xl border border-turquesa p-4 ${palette.card}">
 
 // Cargando
-<View className="flex-1 items-center justify-center bg-neutral-50">
-  <ActivityIndicator />
+<View className="flex-1 items-center justify-center ${palette.bg}">
+  <ActivityIndicator color={palette.spinner} />
 </View>
 ```
 
 El espaciado entre hijos es `gap-*`, nunca `mt-*` en cada hijo.
-`gap-6` entre bloques, `gap-5` entre campos de formulario, `gap-3`/`gap-2`
-dentro de una tarjeta, `gap-1.5` entre etiqueta y control.
+`gap-6` entre bloques, `gap-5` entre campos, `gap-3`/`gap-2` dentro de una
+tarjeta, `gap-1.5` entre etiqueta y control.
 
----
-
-## Tipografía
-
-```tsx
-<Text className="text-2xl font-bold text-neutral-900">   // Título de pantalla
-<Text className="text-xl font-bold text-neutral-900">    // Título de sección/tarjeta
-<Text className="font-semibold text-neutral-900">        // Título de elemento en lista
-<Text className="text-neutral-500">                      // Texto secundario
-<Text className="text-xs text-neutral-400">              // Fecha, id, metadato
-<Text className="font-semibold text-neutral-700">        // Etiqueta de un campo
-```
+Bordes: interactivos `2px`, contenedores estructurales `1px`.
 
 ---
 
 ## Botón → usa `Button`
 
-`src/components/Button.tsx` es **el** botón del proyecto. No escribas otro
-`Pressable` con fondo azul.
+`src/components/Button.tsx` es **el** botón del proyecto. Altura mínima
+`min-h-[48px]`.
 
 ```tsx
 import Button from '../src/components/Button';
 
 // Primario
-<Button text="Enviar solicitud" onPress={handleSubmit(submit)} />
+<Button text="Registrar finca" onPress={handleSubmit(submit)} />
 
-// Secundario (borde, sin relleno)
+// Secundario (borde 2px turquesa, sin relleno)
 <Button text="Volver" onPress={() => router.back()} secondary />
+
+// Peligro (eliminar, cerrar sesión) → prop danger, no className
+<Button text="Eliminar" onPress={handleDelete} danger />
 
 // Deshabilitado mientras se envía: el texto también cambia
 <Button
-  text={formState.isSubmitting ? 'Guardando…' : 'Guardar cambios'}
-  onPress={handleSubmit(submit)}
-  disabled={formState.isSubmitting}
+  text={saving ? 'Guardando…' : 'Guardar cambios'}
+  onPress={handleSubmit(onSubmit)}
+  disabled={saving}
 />
-
-// Ajuste puntual (se suma a las clases base)
-<Button text="Eliminar caso" onPress={remove} secondary className="border-red-500" />
 ```
 
-Props: `text`, `onPress`, `disabled?`, `secondary?`, `className?`.
+Props: `text`, `onPress`, `disabled?`, `secondary?`, `danger?`, `className?`.
 
 Por dentro (referencia, no lo copies):
 
 | Parte | Clases |
 |---|---|
-| Base | `items-center rounded-xl p-4 active:opacity-80 disabled:opacity-50` |
-| Primario | `bg-blue-600` + texto `font-semibold text-white` |
-| Secundario | `border border-neutral-300` + texto `font-semibold text-neutral-700` |
+| Base | `min-h-[48px] items-center justify-center rounded-xl px-6 active:opacity-80 disabled:opacity-50` |
+| Primario | `bg-turquesa` + texto `font-bricolage text-crema` |
+| Secundario | `border-2 border-turquesa` + texto `font-bricolage text-noche` |
+| Peligro | `border-2 border-red-500` + texto `font-bricolage text-red-600` |
+
+Las variantes HC se resuelven por dentro (fondo crema / borde crema / texto
+noche), no se pasan como `className`.
 
 ---
 
 ## Campo de texto → usa `Field`
 
-`src/components/Field.tsx` ya trae etiqueta, borde rojo al fallar y el mensaje
-de error. Solo dentro de un formulario de react-hook-form.
+`src/components/Field.tsx` ya trae etiqueta, foco con `border-noche`, borde rojo
+al fallar y el mensaje de error. Solo dentro de un formulario de react-hook-form.
 
 ```tsx
 <Field
@@ -130,75 +166,56 @@ de error. Solo dentro de un formulario de react-hook-form.
     pattern: { value: /^\S+@\S+\.\S+$/, message: 'Correo inválido' },
   }}
 />
-
-// Área de texto
-<Field
-  control={control}
-  name="description"
-  label="¿Qué está pasando?"
-  multiline
-  numberOfLines={5}
-  textAlignVertical="top"   // sin esto el texto se centra en Android
-  className="h-32"
-/>
 ```
 
 Input suelto (fuera de un formulario, como el buscador):
 
 ```tsx
 <TextInput
-  className="rounded-xl border border-neutral-300 bg-white p-3"
-  placeholderTextColor="#a3a3a3"
+  className="rounded-xl border-2 border-turquesa/50 bg-white p-3 text-noche"
+  placeholderTextColor="#6B979A"
+  onFocus={() => setFocused(true)}
+  onBlur={() => setFocused(false)}
 />
 ```
 
-Clases que aplica `Field` por dentro:
+Recuerda `placeholderTextColor` como **prop**, no como clase.
 
-| Parte | Clases |
-|---|---|
-| Grupo | `gap-1.5` |
-| Etiqueta | `font-semibold text-neutral-700` |
-| Input | `rounded-xl border bg-white p-3.5` + `border-neutral-300` / `border-red-500` |
-| Error del campo | `text-xs text-red-600` |
+---
+
+## Búsqueda → usa `SearchBar`
+
+```tsx
+import SearchBar from '../src/components/SearchBar';
+<SearchBar value={query} onChangeText={setQuery} placeholder="Buscar…" />
+```
+
+Mismo comportamiento de foco que `Field`.
 
 ---
 
 ## Selección de una opción → usa `Select`
 
 ```tsx
-<Select control={control} name="priority" label="Prioridad" options={PRIORITIES} />
-
-<Select
-  control={control}
-  name="categoryId"
-  label="Categoría"
-  options={categories.map((c) => ({ value: c.id, label: `${c.name} · ${c.slaHours}h` }))}
-  empty="No se pudo cargar el catálogo."
-/>
+<Select control={control} name="severity" label="Severidad" options={SEVERITIES} />
 ```
 
-Chip (la opción individual), por si hay que hacer uno fuera del formulario:
-
-```tsx
-<Pressable
-  className={`rounded-full border px-4 py-2 active:opacity-70 ${
-    active ? 'border-blue-600 bg-blue-600' : 'border-neutral-300 bg-white'
-  }`}>
-  <Text className={`text-xs font-semibold ${active ? 'text-white' : 'text-neutral-600'}`}>
-```
+`Select` y `ChipFilter` son chips `rounded-full border-2`: activo
+`bg-turquesa text-crema`, inactivo `bg-white border-turquesa text-noche`
+(HC: activo `bg-crema text-noche`). Exponen `accessibilityRole="button"` y
+`accessibilityState={{ selected }}`.
 
 ---
 
 ## Etiqueta de estado/prioridad → usa `Badge`
 
 ```tsx
-<Badge value={ticket.status} />
-<Badge value={ticket.priority} />
+<Badge value={crop.healthStatus} />
 ```
 
-Base: `self-start rounded-full px-2.5 py-1 text-[10px] font-bold`. El color
-sale del mapa `COLORS` en `src/components/Badge.tsx`; **valor nuevo del
-backend ⇒ entrada nueva ahí**, no un color en la pantalla.
+`Badge` consume `useAccessibility()` y tiene un mapa light/dark de colores por
+valor. **Valor nuevo del backend ⇒ entrada nueva en el mapa de
+`src/components/Badge.tsx`**, no un color en la pantalla.
 
 ---
 
@@ -208,13 +225,13 @@ Un solo formato para el error que devuelve el servidor:
 
 ```tsx
 {!!formState.errors.root && (
-  <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">
+  <Text className={`rounded-lg p-3 text-center ${palette.errorBanner}`}>
     {formState.errors.root.message}
   </Text>
 )}
 ```
 
-Error que impide cargar la pantalla: `text-center text-red-700` + un
+Error que impide cargar la pantalla: `text-center ${palette.errorBanner}` + un
 `<Button ... secondary />` para volver.
 
 ---
@@ -222,16 +239,13 @@ Error que impide cargar la pantalla: `text-center text-red-700` + un
 ## Lista
 
 ```tsx
-<FlatList
-  contentContainerClassName="gap-3 p-4"
-  ...
-/>
+<FlatList contentContainerClassName="gap-3 p-4" ... />
 
 // Fila pulsable
-<Pressable className="gap-2 rounded-2xl bg-white p-4 active:opacity-80">
+<Pressable className="gap-2 rounded-2xl border border-turquesa p-4 ${palette.card} active:opacity-80">
 
 // Vacío o error
-<Text className="p-6 text-center text-neutral-500">
+<Text className={`p-6 text-center ${palette.faint}`}>
 ```
 
 ---
@@ -239,5 +253,5 @@ Error que impide cargar la pantalla: `text-center text-red-700` + un
 ## Enlace
 
 ```tsx
-<Link href="/login" className="text-center text-blue-600">
+<Link href="/login" className="text-center text-turquesa">
 ```

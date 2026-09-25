@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TextInput } from 'react-native';
 import { useAccessibility } from '../accessibility/context';
 
@@ -9,6 +10,7 @@ interface SearchBarProps {
 
 export default function SearchBar({ value, onChangeText, placeholder }: SearchBarProps) {
   const { highContrast } = useAccessibility();
+  const [focused, setFocused] = useState(false);
 
   return (
     <TextInput
@@ -17,10 +19,16 @@ export default function SearchBar({ value, onChangeText, placeholder }: SearchBa
       value={value}
       onChangeText={onChangeText}
       placeholder={placeholder}
-      placeholderTextColor={highContrast ? '#fbbf24' : '#a3a3a3'}
-      className={`mb-4 rounded-xl border p-3.5 ${
-        highContrast ? 'border-amber-400 bg-black text-amber-400' : 'border-neutral-300 bg-white'
+      placeholderTextColor={highContrast ? '#F3F4F480' : '#6B979A'}
+      className={`mb-4 rounded-xl border-2 p-3.5 ${
+        focused
+          ? 'border-noche'
+          : highContrast
+            ? 'border-crema bg-noche text-crema'
+            : 'border-turquesa/50 bg-white text-noche'
       }`}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
     />
   );
 }

@@ -8,25 +8,25 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import Button from '../../src/components/Button';
-import ChipFilter from '../../src/components/ChipFilter';
-import SearchBar from '../../src/components/SearchBar';
-import { useAccessibility } from '../../src/accessibility/context';
-import { getCrops, type Crop } from '../../src/services/crops';
-import { getFarms, type Farm } from '../../src/services/farms';
-import { getSession } from '../../src/services/session';
+import Button from '../../../src/components/Button';
+import ChipFilter from '../../../src/components/ChipFilter';
+import SearchBar from '../../../src/components/SearchBar';
+import { useAccessibility } from '../../../src/accessibility/context';
+import { getCrops, type Crop } from '../../../src/services/crops';
+import { getFarms, type Farm } from '../../../src/services/farms';
+import { getSession } from '../../../src/services/session';
 
-const STAGE_COLORS: Record<string, string> = {
-  vegetativo: 'bg-green-50 text-green-700',
-  'floración': 'bg-sky-50 text-sky-700',
-  'fructificación': 'bg-amber-50 text-amber-700',
-  'producción': 'bg-violet-50 text-violet-700',
+const STAGE_COLORS: Record<string, { light: string; dark: string }> = {
+  vegetativo: { light: 'bg-green-50 text-green-700', dark: 'bg-green-950 text-green-300' },
+  'floración': { light: 'bg-sky-50 text-sky-700', dark: 'bg-sky-950 text-sky-300' },
+  'fructificación': { light: 'bg-amber-50 text-amber-700', dark: 'bg-amber-950 text-amber-300' },
+  'producción': { light: 'bg-violet-50 text-violet-700', dark: 'bg-violet-950 text-violet-300' },
 };
 
 export default function CropsScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ farmId?: string }>();
-  const { palette } = useAccessibility();
+  const { palette, highContrast } = useAccessibility();
   const [crops, setCrops] = useState<Crop[]>([]);
   const [farms, setFarms] = useState<Farm[]>([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +96,7 @@ export default function CropsScreen() {
     <View className={`flex-1 ${palette.bg} p-6`}>
       <View className="mb-4 flex-row items-center justify-between">
         <View>
-          <Text className={`text-2xl font-bold ${palette.title}`}>Cultivos</Text>
+          <Text className={`text-2xl font-bricolage ${palette.title}`}>Cultivos</Text>
           <Text className={`text-sm ${palette.sub}`}>
             {selectedFarmName ? `Finca: ${selectedFarmName}` : 'Todos tus cultivos'}
           </Text>
@@ -106,13 +106,13 @@ export default function CropsScreen() {
 
       {error ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-          <Text className="text-center text-sm font-semibold">{error}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{error}</Text>
         </View>
       ) : null}
 
       {farms.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
-          <Text className={`text-center text-lg font-semibold ${palette.body}`}>
+          <Text className={`text-center text-lg font-inter-semibold ${palette.body}`}>
             Aún no tienes fincas registradas
           </Text>
           <Text className={`text-center text-sm ${palette.sub}`}>
@@ -122,7 +122,7 @@ export default function CropsScreen() {
         </View>
       ) : crops.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
-          <Text className={`text-center text-lg font-semibold ${palette.body}`}>
+          <Text className={`text-center text-lg font-inter-semibold ${palette.body}`}>
             No tienes cultivos registrados
           </Text>
           <Text className={`text-center text-sm ${palette.sub}`}>
@@ -163,10 +163,16 @@ export default function CropsScreen() {
               className={`mb-3 rounded-2xl p-4 ${palette.card}`}
             >
               <View className="flex-row items-center justify-between">
-                <Text className={`text-lg font-bold ${palette.title}`}>{item.species}</Text>
+                <Text className={`text-lg font-inter-semibold ${palette.title}`}>{item.species}</Text>
                 <Text
-                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
-                    STAGE_COLORS[item.growthStage] ?? 'bg-neutral-100 text-neutral-600'
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-inter-bold ${
+                    STAGE_COLORS[item.growthStage]
+                      ? highContrast
+                        ? STAGE_COLORS[item.growthStage].dark
+                        : STAGE_COLORS[item.growthStage].light
+                      : highContrast
+                        ? 'bg-turquesa text-crema'
+                        : 'bg-neutral-100 text-neutral-600'
                   }`}
                 >
                   {item.growthStage}

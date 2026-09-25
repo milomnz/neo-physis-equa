@@ -86,7 +86,7 @@ export default function NewCropScreen() {
     >
       <View className="flex-1 justify-center gap-5 p-6">
         <View className="items-center gap-1">
-          <Text className={`text-2xl font-bold ${palette.title}`}>Nuevo cultivo</Text>
+          <Text className={`text-2xl font-bricolage ${palette.title}`}>Nuevo cultivo</Text>
           <Text className={`text-center ${palette.sub}`}>
             Registra un cultivo asociado a una de tus fincas
           </Text>

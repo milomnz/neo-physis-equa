@@ -51,16 +51,16 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-neutral-50"
+      className="flex-1 bg-crema"
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View className="flex-1 justify-center gap-5 p-6">
         <View className="items-center gap-1">
-          <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-blue-600">
-            <Text className="text-2xl font-bold text-white">N</Text>
+          <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-turquesa">
+            <Text className="text-2xl font-bricolage text-crema">N</Text>
           </View>
-          <Text className="text-2xl font-bold text-neutral-900">Neo Physis Equa</Text>
-          <Text className="text-center text-neutral-500">Inicia sesión en tu cuenta</Text>
+          <Text className="text-2xl font-bricolage text-noche">Neo Physis Equa</Text>
+          <Text className="text-center text-turquesa">Inicia sesión en tu cuenta</Text>
         </View>
 
         {errors.root?.message && (
@@ -98,7 +98,7 @@ export default function LoginScreen() {
           disabled={loading}
         />
 
-        <Link href="/register" className="text-center text-blue-600">
+        <Link href="/register" className="text-center text-turquesa">
           ¿No tienes cuenta? Regístrate
         </Link>
       </View>
