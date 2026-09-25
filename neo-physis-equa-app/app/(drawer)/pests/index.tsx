@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import Badge from '../../src/components/Badge';
-import Button from '../../src/components/Button';
-import ChipFilter from '../../src/components/ChipFilter';
-import SearchBar from '../../src/components/SearchBar';
-import { useAccessibility } from '../../src/accessibility/context';
-import { getCrops, type Crop } from '../../src/services/crops';
-import { getPests, type Pest } from '../../src/services/pests';
-import { getSession } from '../../src/services/session';
+import Badge from '../../../src/components/Badge';
+import Button from '../../../src/components/Button';
+import ChipFilter from '../../../src/components/ChipFilter';
+import SearchBar from '../../../src/components/SearchBar';
+import { useAccessibility } from '../../../src/accessibility/context';
+import { getCrops, type Crop } from '../../../src/services/crops';
+import { getPests, type Pest } from '../../../src/services/pests';
+import { getSession } from '../../../src/services/session';
 
 export default function PestsScreen() {
   const router = useRouter();
@@ -84,7 +84,7 @@ export default function PestsScreen() {
     <View className={`flex-1 ${palette.bg} p-6`}>
       <View className="mb-4 flex-row items-center justify-between">
         <View>
-          <Text className={`text-2xl font-bold ${palette.title}`}>Plagas</Text>
+          <Text className={`text-2xl font-bricolage ${palette.title}`}>Plagas</Text>
           <Text className={`text-sm ${palette.sub}`}>
             {selectedCropLabel ? `Cultivo: ${selectedCropLabel}` : 'Plagas de tus cultivos'}
           </Text>
@@ -94,13 +94,13 @@ export default function PestsScreen() {
 
       {error ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-          <Text className="text-center text-sm font-semibold">{error}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{error}</Text>
         </View>
       ) : null}
 
       {crops.length === 0 ? (
         <View className="flex-1 items-center justify-center gap-3">
-          <Text className={`text-center text-lg font-semibold ${palette.body}`}>
+          <Text className={`text-center text-lg font-inter-semibold ${palette.body}`}>
             Aún no tienes cultivos registrados
           </Text>
           <Text className={`text-center text-sm ${palette.sub}`}>
@@ -141,7 +141,7 @@ export default function PestsScreen() {
               className={`mb-3 rounded-2xl p-4 ${palette.card}`}
             >
               <View className="flex-row items-center justify-between">
-                <Text className={`text-lg font-bold ${palette.title}`}>{item.commonName}</Text>
+                <Text className={`text-lg font-inter-semibold ${palette.title}`}>{item.commonName}</Text>
                 <Badge value={item.severity} />
               </View>
               {item.scientificName ? (

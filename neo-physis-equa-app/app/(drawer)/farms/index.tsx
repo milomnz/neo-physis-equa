@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'expo-router';
-import Button from '../../src/components/Button';
-import Field from '../../src/components/Field';
-import SearchBar from '../../src/components/SearchBar';
-import { useAccessibility } from '../../src/accessibility/context';
-import { createFarm, getFarms, type Farm } from '../../src/services/farms';
-import { getSession } from '../../src/services/session';
+import Button from '../../../src/components/Button';
+import Field from '../../../src/components/Field';
+import SearchBar from '../../../src/components/SearchBar';
+import { useAccessibility } from '../../../src/accessibility/context';
+import { createFarm, getFarms, type Farm } from '../../../src/services/farms';
+import { getSession } from '../../../src/services/session';
 
 interface FarmForm {
   name: string;
@@ -110,7 +110,7 @@ export default function FarmsScreen() {
   return (
     <View className={`flex-1 ${palette.bg} p-6`}>
       <View className="mb-5 gap-1">
-        <Text className={`text-2xl font-bold ${palette.title}`}>Mis Fincas</Text>
+        <Text className={`text-2xl font-bricolage ${palette.title}`}>Mis Fincas</Text>
         <Text className={`text-sm ${palette.sub}`}>
           Terrenos agrícolas para el diagnóstico de plagas
         </Text>
@@ -128,18 +128,18 @@ export default function FarmsScreen() {
 
       {success ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
-          <Text className="text-center text-sm font-semibold">{success}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{success}</Text>
         </View>
       ) : null}
       {errors.root?.message ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-          <Text className="text-center text-sm font-semibold">{errors.root.message}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{errors.root.message}</Text>
         </View>
       ) : null}
 
-      {showForm && (
+{showForm ? (
         <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
-          <Text className={`text-xl font-bold ${palette.title}`}>Registrar finca</Text>
+          <Text className={`text-xl font-bricolage ${palette.title}`}>Registrar finca</Text>
 
           <Field
             control={control}
@@ -188,11 +188,9 @@ export default function FarmsScreen() {
             disabled={submitting}
           />
         </View>
-      )}
-
-      {farms.length === 0 ? (
+      ) : farms.length === 0 ? (
         <View className={`flex-1 items-center justify-center gap-3 rounded-2xl p-6 ${palette.card}`}>
-          <Text className={`text-lg font-semibold ${palette.title}`}>No tienes fincas registradas</Text>
+          <Text className={`text-lg font-inter-semibold ${palette.title}`}>No tienes fincas registradas</Text>
           <Text className={`text-center text-sm ${palette.sub}`}>
             Registra tu primera finca para vincularla al diagnóstico de plagas.
           </Text>
@@ -223,8 +221,8 @@ export default function FarmsScreen() {
               className={`gap-3 rounded-2xl p-4 ${palette.card}`}
             >
               <View className="flex-row items-center justify-between gap-2">
-                <Text className={`flex-1 text-lg font-semibold ${palette.title}`}>{item.name}</Text>
-                <Text className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${palette.chipBg}`}>
+                <Text className={`flex-1 text-lg font-inter-semibold ${palette.title}`}>{item.name}</Text>
+                <Text className={`rounded-full px-2.5 py-1 text-[12px] font-inter-bold ${palette.chipBg}`}>
                   {item.altitude} m s. n. m.
                 </Text>
               </View>

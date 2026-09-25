@@ -39,11 +39,11 @@ export default function Select<T extends FieldValues>({
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <View className="gap-1.5">
-          <Text className={`font-semibold ${highContrast ? 'text-amber-400' : 'text-neutral-700'}`}>
+          <Text className={`font-inter-semibold ${highContrast ? 'text-crema' : 'text-noche'}`}>
             {label}
           </Text>
           {options.length === 0 ? (
-            <Text className={highContrast ? 'text-zinc-300' : 'text-neutral-500'}>
+            <Text className={highContrast ? 'text-crema/80' : 'text-turquesa'}>
               {empty ?? 'Sin opciones disponibles'}
             </Text>
           ) : (
@@ -54,25 +54,27 @@ export default function Select<T extends FieldValues>({
                   <Pressable
                     key={String(option.value)}
                     onPress={() => onChange(option.value)}
-                    className={`rounded-full border px-4 py-2 active:opacity-70 ${
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: active }}
+                    className={`rounded-full border-2 px-4 py-2 active:opacity-70 ${
                       active
                         ? highContrast
-                          ? 'border-amber-400 bg-amber-400'
-                          : 'border-blue-600 bg-blue-600'
+                          ? 'border-crema bg-crema'
+                          : 'border-turquesa bg-turquesa'
                         : highContrast
-                          ? 'border-amber-400 bg-black'
-                          : 'border-neutral-300 bg-white'
+                          ? 'border-crema bg-noche'
+                          : 'border-turquesa bg-white'
                     }`}
                   >
                     <Text
-                      className={`text-xs font-semibold ${
+                      className={`text-xs font-inter-semibold ${
                         active
                           ? highContrast
-                            ? 'text-black'
-                            : 'text-white'
+                            ? 'text-noche'
+                            : 'text-crema'
                           : highContrast
-                            ? 'text-amber-400'
-                            : 'text-neutral-600'
+                            ? 'text-crema'
+                            : 'text-noche'
                       }`}
                     >
                       {option.label}

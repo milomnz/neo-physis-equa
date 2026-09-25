@@ -18,28 +18,28 @@ export interface AppPalette {
 export const buildPalette = (highContrast: boolean): AppPalette =>
   highContrast
     ? {
-        bg: 'bg-black',
-        card: 'bg-zinc-900 border-2 border-amber-400',
-        title: 'text-amber-400',
-        body: 'text-zinc-200',
-        sub: 'text-zinc-300',
-        faint: 'text-zinc-400',
-        chipBg: 'bg-zinc-800 text-amber-400',
-        errorBanner: 'bg-red-950 text-red-400',
-        successBanner: 'bg-green-950 text-green-400',
-        spinner: '#fbbf24',
+        bg: 'bg-noche',
+        card: 'bg-turquesa border-2 border-crema',
+        title: 'text-crema',
+        body: 'text-crema',
+        sub: 'text-crema/80',
+        faint: 'text-crema/60',
+        chipBg: 'bg-crema text-noche',
+        errorBanner: 'bg-red-950 text-red-300',
+        successBanner: 'bg-green-950 text-green-300',
+        spinner: '#F3F4F4',
       }
     : {
-        bg: 'bg-neutral-50',
-        card: 'bg-white border border-neutral-200',
-        title: 'text-neutral-900',
-        body: 'text-neutral-700',
-        sub: 'text-neutral-500',
-        faint: 'text-neutral-400',
-        chipBg: 'bg-neutral-100 text-neutral-600',
+        bg: 'bg-crema',
+        card: 'bg-white border border-turquesa',
+        title: 'text-noche',
+        body: 'text-noche',
+        sub: 'text-turquesa',
+        faint: 'text-turquesa/70',
+        chipBg: 'bg-white text-noche',
         errorBanner: 'bg-red-50 text-red-700',
         successBanner: 'bg-green-50 text-green-700',
-        spinner: '#2563eb',
+        spinner: '#17536D',
       };
 
 interface AccessibilityContextValue {

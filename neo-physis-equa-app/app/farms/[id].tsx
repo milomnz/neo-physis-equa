@@ -137,7 +137,7 @@ export default function FarmDetailScreen() {
   if (!farm) {
     return (
       <View className={`flex-1 items-center justify-center gap-4 p-6 ${palette.bg}`}>
-        <Text className={`text-lg font-semibold ${palette.title}`}>No se pudo cargar la finca</Text>
+        <Text className={`text-lg font-inter-semibold ${palette.title}`}>No se pudo cargar la finca</Text>
         {screenError ? (
           <Text className={`rounded-lg p-3 text-center text-sm ${palette.errorBanner}`}>
             {screenError}
@@ -153,29 +153,29 @@ export default function FarmDetailScreen() {
       className={`flex-1 ${palette.bg}`}
       contentContainerStyle={{ padding: 24, paddingBottom: 40 }}
     >
-      <Text className={`text-2xl font-bold ${palette.title}`}>Mi finca</Text>
+      <Text className={`text-2xl font-bricolage ${palette.title}`}>Mi finca</Text>
       <Text className={`mb-5 text-sm ${palette.sub}`}>Gestiona los datos de tu terreno agrícola</Text>
 
       {saved ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.successBanner}`}>
-          <Text className="text-center text-sm font-semibold">
+          <Text className="text-center text-sm font-inter-semibold">
             Cambios guardados correctamente
           </Text>
         </View>
       ) : null}
       {screenError ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-          <Text className="text-center text-sm font-semibold">{screenError}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{screenError}</Text>
         </View>
       ) : null}
       {errors.root?.message ? (
         <View className={`mb-4 rounded-lg p-3 ${palette.errorBanner}`}>
-          <Text className="text-center text-sm font-semibold">{errors.root.message}</Text>
+          <Text className="text-center text-sm font-inter-semibold">{errors.root.message}</Text>
         </View>
       ) : null}
 
       <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
-        <Text className={`text-xl font-bold ${palette.title}`}>Editar datos</Text>
+        <Text className={`text-xl font-bricolage ${palette.title}`}>Editar datos</Text>
 
         <Field
           control={control}
@@ -223,7 +223,7 @@ export default function FarmDetailScreen() {
       </View>
 
       <View className={`mb-6 gap-2 rounded-2xl p-4 ${palette.card}`}>
-        <Text className={`text-xl font-bold ${palette.title}`}>Cultivos de esta finca</Text>
+        <Text className={`text-xl font-bricolage ${palette.title}`}>Cultivos de esta finca</Text>
         <Text className={`text-sm ${palette.sub}`}>
           Desde aquí puedes registrar y gestionar los cultivos sembrados en {farm.name}.
         </Text>

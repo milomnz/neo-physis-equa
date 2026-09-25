@@ -21,7 +21,7 @@ El esquema de colores se compone de cuatro tonos extraídos directamente de la p
 | :--- | :--- | :--- | :--- |
 | **Azul Noche Profundo** | `#011824` | / `text-primary` | Texto principal, títulos, modo oscuro (fondos), alto contraste. |
 | **Azul turquesa oscuro** | `#17536D` | / `bg-primary` | Barras de navegación (Header), botones de acción principal (CTA), íconos destacados. |
-| **Verde Turquesa** | `#6B979A` | / `accent` | Botones secundarios, bordes de tarjetas, estados inactivos, indicadores visuales de progreso. |
+| **Verde Turquesa** | `#6B979A` | / `accent` | Texto de placeholder, rieles (tracks) inactivos de switches, acentos decorativos. *(Su ratio de contraste (~2.9:1) no alcanza AA, por eso no se usa en texto informativo ni bordes: los CTA y bordes utilizan turquesa o noche.)* |
 | **Beige** | `#F3F4F4` | / `bg-base` | Fondo general de la aplicación, fondo interior de tarjetas (Cards), contenedores de entrada de texto. |
 
 Para garantizar la accesibilidad táctil y visual, la interfaz adoptará un estilo "Flat" (plano) con bordes sólidos y definidos, minimizando el uso de sombras difusas.

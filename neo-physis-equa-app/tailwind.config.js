@@ -6,13 +6,16 @@ module.exports = {
 theme: {
   extend: {
     colors: {
-      'text-primary': '#011824', // Azul Noche Profundo
-      'bg-primary': '#17536D',   // Azul turquesa oscuro
-      'accent': '#6B979A',       // Verde Turquesa
-      'bg-base': '#F3F4F4',      // Beige
+      'noche': '#011824',     // Azul Noche Profundo
+      'turquesa': '#17536D',  // Azul turquesa oscuro
+      'accent': '#6B979A',    // Verde Turquesa
+      'crema': '#F3F4F4',     // Beige
     },
     fontFamily: {
+      sans: ['Inter_400Regular', 'sans-serif'],
       inter: ['Inter_400Regular', 'sans-serif'],
+      'inter-semibold': ['Inter_600SemiBold', 'sans-serif'],
+      'inter-bold': ['Inter_700Bold', 'sans-serif'],
       bricolage: ['BricolageGrotesque_700Bold', 'sans-serif'],
     }
   }
