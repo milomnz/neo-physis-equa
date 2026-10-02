@@ -1,0 +1,20 @@
+{
+  "name": "neo-physis-equa",
+  "version": "1.0.0",
+  "description": "**Neo-Physis-Equa** es una plataforma de **inclusión agrícola accesible** diseñada para empoderar a pequeños productores y trabajadores del campo, permitiendo la **incorporación productiva de personas con discapacidad** (visual, motora, auditiva e intelectual). La plataforma utiliza técnicas de visión por computador e Inteligencia Artificial mediante la cámara del dispositivo móvil para la **predicción y diagnóstico oportuno de plagas en cultivos**.",
+  "homepage": "https://github.com/milomnz/neo-physis-equa#readme",
+  "bugs": {
+    "url": "https://github.com/milomnz/neo-physis-equa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/milomnz/neo-physis-equa.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
