@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "neo-physis-equa-app",
-    "slug": "neo-physis-equa-app",
-    "scheme": "neophysisequa",
+    "name": "agrophysis",
+    "slug": "agrophysis",
+    "scheme": "agrophysis",
     "plugins": [
       "expo-router",
       "expo-secure-store",
@@ -20,11 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.juancarvajalsteam.agrophysis"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b706fad7-189b-47dc-9a03-37b5b744c070"
+      }
+    },
+    "owner": "juancarvajals-team"
   }
 }
