@@ -1,5 +1,5 @@
-import NewPest from '../../src/components/pests/NewPest';
+import NewPestScreen from '../../src/screens/pests/NewPestScreen';
 
 export default function NewPestRoute() {
-  return <NewPest />;
+  return <NewPestScreen />;
 }
