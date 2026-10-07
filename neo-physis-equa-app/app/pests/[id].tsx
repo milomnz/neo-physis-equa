@@ -1,5 +1,5 @@
-import PestDetail from '../../src/components/pests/PestDetail';
+import PestDetailScreen from '../../src/screens/pests/PestDetailScreen';
 
 export default function PestDetailRoute() {
-  return <PestDetail />;
+  return <PestDetailScreen />;
 }
