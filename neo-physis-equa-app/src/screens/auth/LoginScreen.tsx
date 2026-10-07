@@ -1,19 +1,17 @@
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import Button from '../Button';
-import Field from '../Field';
-import { LOGIN_FIELD_RULES, type LoginForm } from './validators';
-import { useLogin } from './useLogin';
+import Button from '../../components/Button';
+import Field from '../../components/Field';
+import AuthHeader from './components/AuthHeader';
+import { LOGIN_FIELD_RULES, type LoginForm } from '../../utils/auth-validators';
+import { useLogin } from '../../hooks/useLogin';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { loading, error, login } = useLogin();
 
-  const {
-    control,
-    handleSubmit,
-  } = useForm<LoginForm>();
+  const { control, handleSubmit } = useForm<LoginForm>();
 
   const onSubmit = async (data: LoginForm) => {
     if (await login(data)) {
@@ -27,13 +25,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View className="flex-1 justify-center gap-5 p-6">
-        <View className="items-center gap-1">
-          <View className="mb-2 h-16 w-16 items-center justify-center rounded-2xl bg-turquesa">
-            <Text className="text-2xl font-bricolage text-crema">N</Text>
-          </View>
-          <Text className="text-2xl font-bricolage text-noche">Neo Physis Equa</Text>
-          <Text className="text-center text-turquesa">Inicia sesión en tu cuenta</Text>
-        </View>
+        <AuthHeader title="Neo Physis Equa" subtitle="Inicia sesión en tu cuenta" />
 
         {error && (
           <Text className="rounded-lg bg-red-50 p-3 text-center text-red-700">{error}</Text>

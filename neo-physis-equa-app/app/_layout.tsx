@@ -42,7 +42,7 @@ function RootStack() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="home" options={{ headerShown: false }} />
-      <Stack.Screen name="register" options={{ title: 'Crear cuenta' }} />
+      <Stack.Screen name="register" options={{ headerShown: false }} />
 
       {/* 2. El Grupo Drawer (Ocultamos el header del Stack para que el Drawer muestre el suyo) */}
       <Stack.Screen name="(drawer)" options={{ headerShown: false }} />

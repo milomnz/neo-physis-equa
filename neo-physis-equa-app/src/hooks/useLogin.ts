@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { login as loginRequest, type LoginData } from '../../services/auth';
-import { saveSession } from '../../services/session';
+import { login as loginRequest, type LoginData } from '../services/auth';
+import { saveSession } from '../services/session';
 
 interface UseLoginResult {
   loading: boolean;
