@@ -1,4 +1,4 @@
-import CropDetailScreen from '../../src/components/crops/CropDetailScreen';
+import CropDetailScreen from '../../src/screens/crops/CropDetailScreen';
 
 export default function CropDetailRoute() {
   return <CropDetailScreen />;

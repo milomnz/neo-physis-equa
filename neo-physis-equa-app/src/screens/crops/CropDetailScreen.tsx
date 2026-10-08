@@ -7,20 +7,18 @@ import {
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
-import Button from '../Button';
+import Button from '../../components/Button';
 import { useAccessibility } from '../../accessibility/context';
+import { useCropDetail } from '../../hooks/useCropDetail';
 import CropFormFields from './CropFormFields';
-import { useCropDetail } from './useCropDetail';
-import type { CropFormValues } from './validators';
 
 export default function CropDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string }>();
+  const id = typeof params.id === 'string' ? params.id : undefined;
   const router = useRouter();
   const { palette } = useAccessibility();
 
-  const { control, handleSubmit, reset } = useForm<CropFormValues>();
-  const { loading, saving, saved, error, save, confirmDelete } = useCropDetail(id, reset);
+  const { control, loading, saving, saved, error, onSubmit, confirmDelete } = useCropDetail(id);
 
   if (loading) {
     return (
@@ -61,7 +59,7 @@ export default function CropDetailScreen() {
 
           <Button
             text={saving ? 'Guardando…' : 'Guardar cambios'}
-            onPress={handleSubmit(save)}
+            onPress={onSubmit}
             disabled={saving}
           />
         </View>

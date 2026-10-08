@@ -1,33 +1,16 @@
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, type Control } from 'react-hook-form';
-import Button from '../Button';
-import Select from '../Select';
+import type { Control } from 'react-hook-form';
+import Button from '../../components/Button';
+import Select from '../../components/Select';
 import { useAccessibility } from '../../accessibility/context';
+import { useNewCrop } from '../../hooks/useNewCrop';
 import CropFormFields from './CropFormFields';
-import { useNewCrop } from './useNewCrop';
-import { FARM_FIELD_RULES, type CropFormValues, type NewCropFormValues } from './validators';
+import { FARM_FIELD_RULES, type CropFormValues } from './validators';
 
 export default function NewCropScreen() {
-  const router = useRouter();
   const { palette } = useAccessibility();
-  const { farms, loading, loadError, submit } = useNewCrop();
-
-  const {
-    control,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm<NewCropFormValues>({
-    defaultValues: { growthStage: 'vegetativo' },
-  });
-
-  const onSubmit = async (data: NewCropFormValues) => {
-    const message = await submit(data);
-    if (message) {
-      setError('root', { type: 'manual', message });
-    }
-  };
+  const { control, farms, loading, loadError, submitting, rootError, onSubmit, goToFarms } =
+    useNewCrop();
 
   if (loading) {
     return (
@@ -55,13 +38,13 @@ export default function NewCropScreen() {
             <Text className={`text-center ${palette.sub}`}>
               Para crear un cultivo primero necesitas registrar una finca.
             </Text>
-            <Button text="Ir a mis fincas" onPress={() => router.replace('/farms')} />
+            <Button text="Ir a mis fincas" onPress={goToFarms} />
           </View>
         ) : (
           <>
-            {errors.root?.message && (
+            {rootError && (
               <Text className={`rounded-lg p-3 text-center ${palette.errorBanner}`}>
-                {errors.root.message}
+                {rootError}
               </Text>
             )}
             {loadError ? (
@@ -82,7 +65,11 @@ export default function NewCropScreen() {
             {/* NewCropFormValues extiende CropFormValues; los campos compartidos son compatibles */}
             <CropFormFields control={control as unknown as Control<CropFormValues>} optionalHints />
 
-            <Button text="Registrar cultivo" onPress={handleSubmit(onSubmit)} />
+            <Button
+              text={submitting ? 'Registrando…' : 'Registrar cultivo'}
+              onPress={onSubmit}
+              disabled={submitting}
+            />
           </>
         )}
       </View>

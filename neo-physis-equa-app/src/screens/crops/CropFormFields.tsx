@@ -1,6 +1,6 @@
 import type { Control } from 'react-hook-form';
-import Field from '../Field';
-import Select from '../Select';
+import Field from '../../components/Field';
+import Select from '../../components/Select';
 import { GROWTH_STAGES } from '../../services/crops';
 import { CROP_FIELD_RULES, type CropFormValues } from './validators';
 
