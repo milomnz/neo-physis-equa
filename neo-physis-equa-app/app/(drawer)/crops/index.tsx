@@ -1,4 +1,4 @@
-import CropsListScreen from '../../../src/components/crops/CropsListScreen';
+import CropsListScreen from '../../../src/screens/crops/CropsListScreen';
 
 export default function CropsRoute() {
   return <CropsListScreen />;

@@ -1,10 +1,10 @@
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import Button from '../Button';
-import ChipFilter from '../ChipFilter';
-import SearchBar from '../SearchBar';
+import Button from '../../components/Button';
+import ChipFilter from '../../components/ChipFilter';
+import SearchBar from '../../components/SearchBar';
 import { useAccessibility } from '../../accessibility/context';
-import { useCropList } from './useCropList';
+import { useCropList } from '../../hooks/useCropList';
 
 const STAGE_COLORS: Record<string, { light: string; dark: string }> = {
   vegetativo: { light: 'bg-green-50 text-green-700', dark: 'bg-green-950 text-green-300' },
