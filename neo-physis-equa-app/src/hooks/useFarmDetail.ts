@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useForm } from 'react-hook-form';
 
 import { deleteFarm, getFarm, updateFarm, type Farm } from '../services/farms';
+import { useFarmForm } from './useFarmForm';
 import { useRequireSession } from './useRequireSession';
-
-export interface FarmForm {
-    name: string;
-    vereda: string;
-    municipio: string;
-    altitude: string;
-}
 
 export function useFarmDetail() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,7 +17,7 @@ export function useFarmDetail() {
     const [screenError, setScreenError] = useState('');
     const [saved, setSaved] = useState(false);
 
-    const { control, handleSubmit, reset, formState: { errors } } = useForm<FarmForm>();
+    const { control, handleSubmit, reset, errors } = useFarmForm();
 
     useEffect(() => {
         if (!sessionReady || !id) return;

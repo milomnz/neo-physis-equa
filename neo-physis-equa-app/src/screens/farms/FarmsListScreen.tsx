@@ -1,10 +1,11 @@
-import { ActivityIndicator, Alert, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
 import Button from '../../components/Button';
-import Field from '../../components/Field';
 import SearchBar from '../../components/SearchBar';
 import { useAccessibility } from '../../accessibility/context';
 import { useFarmList } from '../../hooks/useFarmList';
+import FarmCard from './components/FarmCard';
+import FarmFormFields from './components/FarmFormFields';
 
 export default function FarmsListScreen() {
   const { palette } = useAccessibility();
@@ -23,6 +24,7 @@ export default function FarmsListScreen() {
     handleSubmit,
     onSubmit,
     goToDetail,
+    openScanner,
   } = useFarmList();
 
   if (loading) {
@@ -67,46 +69,7 @@ export default function FarmsListScreen() {
         <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
           <Text className={`text-xl font-bricolage ${palette.title}`}>Registrar finca</Text>
 
-          <Field
-            control={control}
-            name="name"
-            label="Nombre de la finca *"
-            autoCapitalize="words"
-            placeholder="ej. Finca El Paraíso"
-            rules={{
-              required: 'El nombre de la finca es obligatorio',
-              maxLength: { value: 100, message: 'El nombre debe tener máximo 100 caracteres' },
-            }}
-          />
-          <Field
-            control={control}
-            name="vereda"
-            label="Vereda"
-            autoCapitalize="words"
-            placeholder="ej. La Esmeralda"
-            rules={{ maxLength: { value: 100, message: 'La vereda debe tener máximo 100 caracteres' } }}
-          />
-          <Field
-            control={control}
-            name="municipio"
-            label="Municipio"
-            autoCapitalize="words"
-            placeholder="ej. Armero"
-            rules={{ maxLength: { value: 100, message: 'El municipio debe tener máximo 100 caracteres' } }}
-          />
-          <Field
-            control={control}
-            name="altitude"
-            label="Altitud (m.s.n.m.) *"
-            keyboardType="numeric"
-            placeholder="ej. 1650"
-            rules={{
-              required: 'La altitud es obligatoria',
-              validate: (value) =>
-                (!isNaN(parseFloat(value)) && parseFloat(value) >= 0) ||
-                'Ingresa una altitud numérica válida mayor o igual a 0',
-            }}
-          />
+          <FarmFormFields control={control} withPlaceholders />
 
           <Button
             text={submitting ? 'Registrando…' : 'Registrar finca'}
@@ -142,37 +105,7 @@ export default function FarmsListScreen() {
             </Text>
           }
           renderItem={({ item }) => (
-            <View
-              accessibilityLabel={`Finca ${item.name}, altitud ${item.altitude} metros sobre el nivel del mar`}
-              className={`gap-3 rounded-2xl p-4 ${palette.card}`}
-            >
-              <View className="flex-row items-center justify-between gap-2">
-                <Text className={`flex-1 text-lg font-inter-semibold ${palette.title}`}>{item.name}</Text>
-                <Text className={`rounded-full px-2.5 py-1 text-[12px] font-inter-bold ${palette.chipBg}`}>
-                  {item.altitude} m s. n. m.
-                </Text>
-              </View>
-
-              <Text className={`text-sm ${palette.sub}`}>
-                {[item.location?.vereda, item.location?.municipio]
-                  .filter(Boolean)
-                  .join(', ') || 'Ubicación no especificada'}
-              </Text>
-
-              <Button
-                text="Diagnosticar plagas"
-                onPress={() => Alert.alert('Escáner', `Preparando la cámara para analizar plagas en ${item.name}…`)}
-                accessibilityLabel={`Iniciar escáner de cámara para la finca ${item.name}`}
-                accessibilityHint="Abre el escáner de cámara para analizar plagas en este terreno"
-              />
-              <Button
-                text="Ver y gestionar →"
-                onPress={() => goToDetail(item.id)}
-                secondary
-                accessibilityLabel={`Ver y gestionar la finca ${item.name}`}
-                accessibilityHint="Abre el detalle de la finca para editarla, eliminarla o ver sus cultivos"
-              />
-            </View>
+            <FarmCard farm={item} onScan={openScanner} onOpen={(farm) => goToDetail(farm.id)} />
           )}
         />
       )}

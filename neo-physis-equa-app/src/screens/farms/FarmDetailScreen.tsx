@@ -1,9 +1,9 @@
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import Button from '../../components/Button';
-import Field from '../../components/Field';
 import { useAccessibility } from '../../accessibility/context';
 import { useFarmDetail } from '../../hooks/useFarmDetail';
+import FarmFormFields from './components/FarmFormFields';
 
 export default function FarmDetailScreen() {
   const { palette } = useAccessibility();
@@ -72,42 +72,7 @@ export default function FarmDetailScreen() {
       <View className={`mb-6 gap-5 rounded-2xl p-4 ${palette.card}`}>
         <Text className={`text-xl font-bricolage ${palette.title}`}>Editar datos</Text>
 
-        <Field
-          control={control}
-          name="name"
-          label="Nombre de la finca *"
-          autoCapitalize="words"
-          rules={{
-            required: 'El nombre de la finca es obligatorio',
-            maxLength: { value: 100, message: 'El nombre debe tener máximo 100 caracteres' },
-          }}
-        />
-        <Field
-          control={control}
-          name="vereda"
-          label="Vereda"
-          autoCapitalize="words"
-          rules={{ maxLength: { value: 100, message: 'La vereda debe tener máximo 100 caracteres' } }}
-        />
-        <Field
-          control={control}
-          name="municipio"
-          label="Municipio"
-          autoCapitalize="words"
-          rules={{ maxLength: { value: 100, message: 'El municipio debe tener máximo 100 caracteres' } }}
-        />
-        <Field
-          control={control}
-          name="altitude"
-          label="Altitud (m.s.n.m.) *"
-          keyboardType="numeric"
-          rules={{
-            required: 'La altitud es obligatoria',
-            validate: (value) =>
-              (!isNaN(parseFloat(value)) && parseFloat(value) >= 0) ||
-              'Ingresa una altitud numérica válida mayor o igual a 0',
-          }}
-        />
+        <FarmFormFields control={control} />
 
         <Button
           text={saving ? 'Guardando…' : 'Guardar cambios'}
