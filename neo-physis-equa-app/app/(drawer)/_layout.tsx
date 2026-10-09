@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, usePathname, useNavigation } from 'expo-router';
-import { useAccessibility } from '../../src/accessibility/context';;
+import { useAccessibility } from '../../src/accessibility/context';
 
 function CustomDrawerContent() {
   const { highContrast } = useAccessibility();
